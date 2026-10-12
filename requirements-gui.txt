@@ -1,0 +1,2 @@
+# Only runtime dependency outside Python standard library + Tk
+ruamel.yaml>=0.18,<0.20

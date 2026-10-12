@@ -1,0 +1,790 @@
+{
+  "schema_version": 1,
+  "language": "pl",
+  "scope": "Upstream config, demo v1.17.0, GUI M1; bilingual reference updated v0.1.4",
+  "parameters": [
+    {
+      "key": "gui.demo_root",
+      "title": "Demo root",
+      "short": "Katalog zagnieżdżonego repozytorium demonstracji zawierający examples/ i tools/.",
+      "long": "Wskaż `tobii-pytracker/tobii-pytracker-demo`, pobrany z `mszac/tobii-pytracker-demo`. GUI wymaga osiem plików YAML dla siedmiu wariantów i przyjmuje katalog dem za bazę rozwiązywania ścieżek względnych. Wczytanie lub zapis profilu nie nadpisuje źródłowych plików repozytorium.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "gui.upstream_root",
+      "title": "Upstream",
+      "short": "Katalog główny oryginalnego repozytorium silnika `sbobek/tobii-pytracker`.",
+      "long": "Wybierz katalog `tobii-pytracker` zawierający `pyproject.toml`, `src/tobii_pytracker` i `configs/`. Repozytorium dem oraz `pytracker-gui` powinny być dwoma odrębnymi podkatalogami tego katalogu. Diagnostyka sprawdza układ i ścieżki; nie zmienia plików silnika.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "gui.python",
+      "title": "Python 3.10",
+      "short": "Ścieżka do interpretera Python 3.10 w środowisku `pytracker-env`.",
+      "long": "Wskaż plik wykonywalny Pythona z istniejącego środowiska Conda `pytracker-env`, a nie dowolny interpreter systemowy. Oryginalny silnik deklaruje wymóg Pythona 3.10.x. Sprawdzenie interpretera w GUI jest diagnostyką wersji, nie testem działania PsychoPy, ioHub ani urządzenia.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "gui.variant",
+      "title": "Wariant demonstracji",
+      "short": "Wybiera jeden z siedmiu wariantów istniejących demonstracji do edycji.",
+      "long": "Lista zawiera Test Demo (EN), UX A/B Text (EN i PL), Time-Series Noise (Machine + PV), Text Search (EN i PL) oraz Image Semantic (EN). Wariant wybiera zestaw źródłowych konfiguracji do odczytu i statycznej kontroli. To nie jest kreator nowych badań ani przycisk wykonania eksperymentu.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "gui.block",
+      "title": "Blok demonstracji",
+      "short": "Przełącza plik YAML wybranego bloku demonstracji.",
+      "long": "Większość demonstracji posiada jeden blok i jeden natywny plik YAML. Time-Series Noise posiada dwa oddzielne bloki Machine Vibration i PV Power, z własnymi wartościami i limitami prób. Zmiana bloku nie przenosi wartości z jednego YAML do drugiego, a obecny GUI nie wykonuje obu bloków.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "gui.gaze",
+      "title": "Źródło gaze",
+      "short": "Wybiera sposób rejestrowania spojrzeń podczas uruchamiania demonstracji z GUI.",
+      "long": "NO_GAZE wyłącza rejestrowanie gaze, ale nie blokuje myszy do udzielania odpowiedzi. MOUSEGAZE uruchamia symulację ioHub za pomocą myszy, a TOBII wybiera konfigurację fizycznego urządzenia. W v0.1.5 wybór jest przekazywany do odrębnego procesu z oryginalnym runtime; poprawność działania urządzenia wymaga rzeczywistego testu.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "gui.iohub_yaml",
+      "title": "Plik ioHub YAML",
+      "short": "Ścieżka do konfiguracji ioHub dla wybranego źródła gaze.",
+      "long": "Dla emulacji MouseGaze zwykle jest to `configs/mouse_eyetracker_config.yaml`, a dla Tobii `configs/eyetracker_config.yaml` w katalogu upstream. Oryginalny punkt wejścia odczytuje plik także przy wyłączonej obsłudze trackera, dlatego dla NO_GAZE również potrzebna jest istniejąca ścieżka. GUI edytuje samą ścieżkę, nie zawartość konfiguracji urządzenia.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "gui.yaml_editor",
+      "title": "Edytor YAML",
+      "short": "Edytuje kopię YAML również poza polami formularzy, bez modyfikacji źródła.",
+      "long": "Zakładka YAML pozwala zmienić pola niewystępujące w formularzach. Parser `ruamel.yaml` zachowuje istniejące komentarze i nierozpoznane klucze przy typowym zapisie dokumentu; nie gwarantuje identycznego formatowania bajt w bajt. Najpierw zastosuj zmiany do modelu w pamięci, a następnie jawnie zapisz profil lub wyeksportuj kopię.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "gui.profile",
+      "title": "Zapis profilu",
+      "short": "Zapisuje osobną kopię konfiguracji i preferencji bez nadpisywania dem.",
+      "long": "Profil obejmuje robocze konfiguracje YAML, wybór źródła gaze, ścieżkę ioHub i przygotowane ustawienia uruchomienia. Metadane pozwalają zasygnalizować zmianę konfiguracji źródłowej od czasu utworzenia profilu. Zapis jest operacją w katalogu danych aplikacji, a nie w oryginalnym repozytorium silnika lub demonstracji.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "gui.instructions",
+      "title": "Instrukcje",
+      "short": "Treść ekranów początkowego i końcowego eksperymentu.",
+      "long": "Pola instructions.intro oraz instructions.outro są listami tekstów wyświetlanych uczestnikowi. W edytorze formularzowym każda linia odpowiada jednemu elementowi listy YAML. Zmieniaj je z uwzględnieniem sposobu sterowania daną demonstracją oraz oczekiwanych odpowiedzi.",
+      "group": "Środowisko / GUI",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.image.path",
+      "title": "Katalog obrazów",
+      "short": "Ścieżka do katalogu obrazów, zwykle zawierającego podfoldery kategorii.",
+      "long": "Silnik odczytuje obrazy z obsługiwanych formatów, takich jak JPG lub PNG. Nazwy podkatalogów mogą służyć jako etykiety klas w zbiorze obrazowym. Dla dem demonstracyjnych ścieżki względne rozwiązywane są względem root repozytorium dem.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.image.bbox_model",
+      "title": "Model bbox obrazów",
+      "short": "Wybiera metodę podziału bodźca obrazowego na obszary: grid, superpixel lub saliency.",
+      "long": "Wartość wybiera strategię obszarów wykorzystywanych do powiązania danych spojrzenia z fragmentami obrazu. `grid` tworzy siatkę, `superpixel` stosuje segmentację, a `saliency` korzysta z mapy istotności. Nie oznacza uruchomienia modelu analitycznego w GUI; dostępność zależy od instalacji i kodu runtime.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.text.path",
+      "title": "Plik CSV z tekstami",
+      "short": "Ścieżka do pliku CSV z zadaniami tekstowymi i kolumnami danych.",
+      "long": "Plik CSV musi mieć w pierwszym wierszu nagłówki kolumn. Powinien zawierać pola wskazane przez label_column_name i text_column_name. Dodatkowe kolumny mogą być wykorzystywane przez specyficzne adaptery danej demonstracji.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.text.label_column_name",
+      "title": "Kolumna etykiet",
+      "short": "Nazwa kolumny CSV określającej etykietę lub poprawną klasę.",
+      "long": "Podaj dokładną nazwę kolumny istniejącej w nagłówku CSV, z zachowaniem wielkości liter. Silnik używa jej do określenia wartości etykiet dostępnych w zadaniu. Nie zmienia ona treści CSV i nie tworzy brakujących kolumn.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.text.text_column_name",
+      "title": "Kolumna tekstu",
+      "short": "Nazwa kolumny CSV zawierającej tekst prezentowany uczestnikowi.",
+      "long": "Wartość musi wskazywać istniejące pole nagłówka CSV. W eksperymentach tekstowych dane z tej kolumny trafiają do wizualizacji bodźców. Nie należy zamieniać jej z kolumną etykiet, ponieważ pełnią odmienne role.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.text.bbox_model",
+      "title": "Model bbox tekstu",
+      "short": "Ustala poziom regionów tekstowych: word, line lub sentence.",
+      "long": "Parametr określa sposób wyznaczania obszarów zainteresowania w tekście. Tryb word dzieli tekst na słowa, line na wiersze, a sentence na zdania. Zmiana wpływa na granulację późniejszej analizy spojrzeń, nie na zawartość CSV.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.text.color",
+      "title": "Kolor tekstu bodźca",
+      "short": "Kolor znaków w wizualizacji tekstowej PsychoPy.",
+      "long": "Oryginalny config.yaml wymienia to pole w sekcji dataset.text jako opcjonalne ustawienie. Zestaw je z background_color tak, aby tekst był czytelny. Jeżeli pole nie występuje w danym demo, edytor formularzowy go nie dopisze automatycznie.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "yaml-only"
+    },
+    {
+      "key": "dataset.text.background_color",
+      "title": "Kolor tła tekstu",
+      "short": "Kolor tła bodźca tekstowego.",
+      "long": "Ten parametr należy do ogólnej konfiguracji modalności tekstowej upstream. Dopasuj go do wartości color, aby zachować kontrast bodźców. W niektórych adapterach demonstracyjnych wygląd może być sterowany dodatkową logiką specyficzną dla danego demo.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "yaml-only"
+    },
+    {
+      "key": "dataset.text.font_height",
+      "title": "Wysokość fontu tekstu",
+      "short": "Wysokość czcionki bodźca tekstowego w adapterach dem.",
+      "long": "To pole jest używane w dostarczonych konfiguracjach demonstracyjnych dla wybranych zadań tekstowych. Reguluje przestrzeń przeznaczoną na znaki bodźca, dlatego wpływa na zawijanie i pozycje obszarów zainteresowania. Nie jest częścią podstawowego przykładu ogólnego config.yaml upstream.",
+      "group": "Dataset / output",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.text.wrap_fraction",
+      "title": "Udział szerokości dla tekstu",
+      "short": "Ułamek dostępnej szerokości ekranu używany do zawijania tekstu w demo.",
+      "long": "W wybranych adapterach demonstracyjnych wartość dodatnia nie większa niż 1 określa, jaką część szerokości można wykorzystać do tekstu. Zmiana może wpływać na liczbę wierszy i współrzędne obszarów zainteresowania. Jest to rozszerzenie konfiguracji konkretnych dem, a nie gwarantowane pole uniwersalnego YAML upstream.",
+      "group": "Dataset / output",
+      "source": "https://github.com/mszac/tobii-pytracker-demo",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.time_series.path",
+      "title": "Plik CSV szeregów czasowych",
+      "short": "Ścieżka do CSV zawierającego próbki i klasy szeregów czasowych.",
+      "long": "Oryginalny framework obsługuje dane time_series w formacie tabelarycznym. Pierwszy wiersz powinien zawierać nagłówki, w tym zdefiniowaną kolumnę etykiet. Demo Time-Series Noise zawiera dwa oddzielne bloki i osobne pliki konfiguracyjne.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.time_series.label_column_name",
+      "title": "Kolumna klas szeregu",
+      "short": "Nagłówek CSV wskazujący klasę danego szeregu.",
+      "long": "Wskazana kolumna jest wykorzystywana jako etykieta dla danych time_series. Nazwa musi odpowiadać rzeczywistemu nagłówkowi dostarczonego pliku. Parametr sam nie przetwarza ani nie zmienia sygnału.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "dataset.time_series.bbox_model",
+      "title": "Model bbox szeregu",
+      "short": "Wybiera granice regionów szeregu: sample albo window.",
+      "long": "Tryb sample umożliwia związanie regionu z pojedynczą próbką szeregu. Tryb window agreguje sąsiednie punkty w okno. Wybór ma znaczenie dla interpretacji późniejszych obszarów gaze na wykresie.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "output.folder",
+      "title": "Katalog wyników",
+      "short": "Folder docelowy dla plików wynikowych eksperymentu.",
+      "long": "Ustawienie określa lokalizację wyników w oryginalnym silniku. Przy uruchamianiu z repozytorium dem ścieżka względna powinna być rozwiązywana zgodnie z jego katalogiem roboczym. Obecna wersja GUI tylko zapisuje i waliduje tę wartość, nie tworzy jeszcze sesji eksperymentalnej.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.monitor.name",
+      "title": "Nazwa monitora",
+      "short": "Identyfikator profilu monitora używanego przez PsychoPy.",
+      "long": "Podana nazwa identyfikuje ustawienia monitora w konfiguracji PsychoPy. Może wpływać na dopasowanie parametrów kalibracji i geometrii wyświetlania. Dobierz ją świadomie do stanowiska badawczego, aby nie pomylić profilu z innym ekranem.",
+      "group": "Monitor",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.monitor.resolution",
+      "title": "Rozdzielczość ekranu",
+      "short": "Rozdzielczość wyświetlania bodźców w pikselach, jako para szerokość i wysokość.",
+      "long": "Podaj szerokość i wysokość w pikselach w kolejności X, Y (np. `1920, 1080`). Parametr informuje PsychoPy i mechanizmy układu o geometrii, ale nie przełącza systemowej rozdzielczości Windows ani Linux. Zgodność z faktycznym monitorem trzeba sprawdzić na stanowisku.",
+      "group": "Monitor",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.monitor.width",
+      "title": "Fizyczna szerokość ekranu",
+      "short": "Szerokość aktywnej części monitora w centymetrach.",
+      "long": "Parametr jest używany razem z odległością obserwatora do określania geometrii widzenia. Podaj zmierzoną szerokość panelu, a nie jego przekątną w calach. Błędna wartość może zafałszować wielkości kątowe wyliczane przez PsychoPy.",
+      "group": "Monitor",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.monitor.distance",
+      "title": "Odległość obserwatora",
+      "short": "Odległość oczu uczestnika od ekranu w centymetrach.",
+      "long": "Wartość służy do konwersji współrzędnych przestrzennych na miary związane z kątem widzenia. Jest to przybliżenie standardowej pozycji uczestnika podczas eksperymentu. Dla badań z eye-trackerem ustawienie powinno odpowiadać rzeczywistemu stanowisku.",
+      "group": "Monitor",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.monitor.display_number",
+      "title": "Numer ekranu",
+      "short": "Indeks ekranu, na którym PsychoPy ma wyświetlać eksperyment.",
+      "long": "Numeracja rozpoczyna się od zera i zależy od kolejności ekranów widzianych przez system. Na stanowiskach wielomonitorowych przetestuj ustawienie przed sesją, by nie pokazać bodźców na ekranie operatora. W konfiguracji YAML zapisujemy wartość całkowitą.",
+      "group": "Monitor",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.button.size",
+      "title": "Rozmiar przycisków",
+      "short": "Szerokość i wysokość przycisków odpowiedzi w pikselach.",
+      "long": "Wartość ma postać pary X i Y. Zmiana wielkości wpływa na obszary klikania oraz miejsce zajmowane przez odpowiedzi na ekranie. Należy przetestować ją łącznie z rozdzielczością i marginesami.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.button.margin",
+      "title": "Margines przycisków",
+      "short": "Odstęp używany przy rozmieszczaniu przycisków odpowiedzi.",
+      "long": "Parametr określa przerwę między elementami sterowania w wizualizacji eksperymentu. Zbyt mały odstęp może utrudnić kliknięcie sąsiednich odpowiedzi. Jednostkę i wynik układu należy zweryfikować z renderowaniem konkretnego demo.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.button.color",
+      "title": "Kolor przycisków",
+      "short": "Kolor tła przycisków odpowiedzi.",
+      "long": "Podawany jako kolor rozpoznawany przez PsychoPy w danej konfiguracji. Powinien kontrastować z kolorem tekstu przycisku. Zmiana wpływa tylko na prezentację, nie na znaczenie odpowiedzi.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.button.text.color",
+      "title": "Kolor tekstu przycisku",
+      "short": "Kolor podpisów przycisków odpowiedzi.",
+      "long": "Wybierz barwę zapewniającą czytelność na wybranym tle button.color. Parametr dotyczy wizualizacji etykiet przycisków, a nie tekstu samego bodźca. Nie wpływa na rejestrowanie gaze ani na kody odpowiedzi.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.button.text.size",
+      "title": "Wielkość tekstu przycisku",
+      "short": "Rozmiar czcionki etykiet przycisków w ustawieniach GUI eksperymentu.",
+      "long": "Wyższa liczba zwiększa podpisy odpowiedzi. Przy długich etykietach i małych przyciskach tekst może przestać się mieścić. Sprawdź podgląd w rzeczywistym PsychoPy, gdy uruchamianie demo zostanie włączone.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.fixation_dot.size",
+      "title": "Rozmiar punktu fiksacji",
+      "short": "Wielkość znacznika fiksacji na ekranie eksperymentu.",
+      "long": "Znacznik może pomagać uczestnikowi skupić wzrok przed prezentacją bodźca. Parametr steruje rozmiarem tego elementu UI. Jego obecność i czas pokazywania zależą także od przebiegu konkretnego eksperymentu.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.fixation_dot.color",
+      "title": "Kolor punktu fiksacji",
+      "short": "Kolor znacznika używanego do fiksacji wzroku.",
+      "long": "Ustaw go tak, aby punkt był widoczny na tle danej demonstracji. Jest to parametr wizualny, niezależny od surowego pomiaru eye-trackera. Nie należy mylić tego znacznika z elementami kalibracji ioHub.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "display.gui.aoe",
+      "title": "Obszar AOE",
+      "short": "Rozmiar obszaru układu eksperymentu (AOE), nie lista obszarów AOI bodźca.",
+      "long": "W głównym YAML jest to para liczb definiująca rozmiar obszaru eksperymentu wykorzystywanego w układzie. AOE nie jest listą regionów zainteresowania (AOI) wyliczonych dla pojedynczego obrazu, tekstu czy szeregu. Jednostkę i działanie należy rozpatrywać wraz z konfiguracją PsychoPy i danego demo.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "instructions.intro",
+      "title": "Instrukcje przed startem",
+      "short": "Lista kolejnych linii instrukcji wyświetlanych przed eksperymentem.",
+      "long": "Każda linia w edytorze GUI staje się oddzielnym elementem listy YAML. W instrukcji można opisać przebieg zadania, sterowanie i sposób rozpoczęcia. Treść powinna odpowiadać aktualnemu demo, szczególnie po zmianie sposobu rejestracji gaze.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "instructions.outro",
+      "title": "Instrukcje po zakończeniu",
+      "short": "Lista komunikatów pokazywanych po ukończeniu demonstracji.",
+      "long": "Pole definiuje komunikat końcowy dla uczestnika. Może wyjaśniać, że sesja dobiegła końca i jak zamknąć PsychoPy. Sam komunikat nie jest dowodem poprawności zapisania wyników, dlatego nie należy obiecywać zapisu bez potwierdzenia runtime.",
+      "group": "Wygląd / layout",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "gui"
+    },
+    {
+      "key": "runtime.config_file",
+      "title": "--config_file",
+      "short": "Wskazuje główny YAML eksperymentu przekazywany oryginalnemu runtime.",
+      "long": "Oryginalne CLI udostępnia `--config_file`; GUI nie uruchamia już skryptu shell z domyślnymi plikami. W v0.1.5 tworzy poza repozytoriami nową kopię aktualnie edytowanego YAML i przekazuje jej ścieżkę do `CustomConfig` w osobnym procesie. Ścieżki dataset są rozwiązywane względem katalogu głównego repozytorium dem.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "reference"
+    },
+    {
+      "key": "runtime.eyetracker_config_file",
+      "title": "--eyetracker_config_file",
+      "short": "Ścieżka do pliku YAML urządzenia obsługiwanego przez ioHub.",
+      "long": "Parametr CLI wskazuje konfigurację używaną przez launchHubServer. Należy go powiązać z wyborem MouseGaze lub Tobii. W upstream plik jest wczytywany także przy wyłączonym rejestrowaniu gaze, więc ścieżka powinna istnieć.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "reference"
+    },
+    {
+      "key": "runtime.enable_eyetracker",
+      "title": "--enable_eyetracker",
+      "short": "Włącza zbieranie gaze przez ioHub dla MouseGaze lub Tobii podczas startu.",
+      "long": "Flaga `enable_eyetracker` ma wartość True dla MOUSEGAZE i TOBII oraz False dla NO_GAZE. Konkretny sterownik wybiera osobny plik YAML ioHub. Nawet przy NO_GAZE upstream wymaga istniejącej ścieżki do pliku konfiguracyjnego, a odpowiedzi myszą pozostają aktywne. Ta wersja przekazuje flagę do `main.main`, ale nie potwierdza sprzętowej gotowości urządzenia.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "reference"
+    },
+    {
+      "key": "runtime.enable_voice",
+      "title": "Voice / --enable_voice",
+      "short": "Wybiera nagrywanie głosu i przekazuje opcję do oryginalnego procesu eksperymentu.",
+      "long": "Podczas uruchamiania GUI przekazuje `enable_voice` do `main.main`, również dla dem wykorzystujących adaptery. Tryb potrzebuje poprawnie skonfigurowanego mikrofonu i funkcjonującego toru audio w środowisku PsychoPy. Pomyślny start procesu nie stanowi dowodu, że nagranie dźwiękowe zostało utworzone; należy sprawdzić rezultat na docelowym Windows/Linux.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "runtime.raw_data",
+      "title": "Raw data / --raw_data",
+      "short": "Wybiera surowy zapis gaze i przekazuje ustawienie do runtime eye-trackera.",
+      "long": "Opcja `raw_data` jest przekazywana do oryginalnego silnika, także w demonstracjach z adapterami. Wymaga trybu gaze MOUSEGAZE albo TOBII; GUI blokuje połączenie Raw data z NO_GAZE. Format i kompletność surowych danych zależą od wersji ioHub i urządzenia i wymagają weryfikacji na fizycznym stanowisku.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "runtime.disable_psychopy",
+      "title": "--disable_psychopy",
+      "short": "Uruchamia tryb headless bez okna PsychoPy.",
+      "long": "Upstream udostępnia ten wariant do ciągłego zbierania gaze i voice aż do zatrzymania. Nie jest to zwykły tryb przeprowadzania obecnych siedmiu demonstracji. Dlatego GUI M1 nie oferuje jeszcze tego przełącznika.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "future"
+    },
+    {
+      "key": "runtime.loop_count",
+      "title": "Liczba prób / --loop_count",
+      "short": "Ustawia liczbę prób wykonywanych w bieżącym bloku demonstracji.",
+      "long": "GUI przekazuje liczbę prób do `main.main` i ogranicza ją do zdefiniowanego zakresu danego bloku. W Time-Series Noise są dwa osobne procesy: Machine, następnie PV, z niezależną liczbą prób maksymalnie 9 w każdym. Przy wartości mniejszej od pełnej długości sesji oryginalne walidatory, które oczekują pełnego zestawu, są pomijane, a kolekcja zostaje oznaczona jako niezweryfikowana.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "runtime.log_level",
+      "title": "Log level / --log_level",
+      "short": "Ustawia poziom szczegółowości logów procesu eksperymentu.",
+      "long": "Podczas uruchamiania GUI konfiguruje `CustomLogger` w odrębnym procesie wybranym poziomem debug, info, warning, error albo critical. Standardowe wyjście i błędy są zbierane do trwałego `console.log` w prywatnym katalogu sesji. Wyższa szczegółowość może pomóc w diagnozie problemów, lecz nie zastępuje walidacji zebranych wyników.",
+      "group": "Parametry uruchomienia",
+      "source": "https://github.com/sbobek/tobii-pytracker#usage",
+      "status": "gui"
+    },
+    {
+      "key": "iohub.mouse.name",
+      "title": "MouseGaze name",
+      "short": "Nazwa urządzenia emulowanego w instancji ioHub.",
+      "long": "Oryginalny plik nazywa je tracker. Ta nazwa pozwala odwoływać się do urządzenia w kontekście ioHub. Zmiana bez modyfikacji kodu klienta może spowodować brak dostępu do urządzenia.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.mouse.auto_report_events",
+      "title": "MouseGaze auto_report_events",
+      "short": "Wskazuje, czy MouseGaze zaczyna zgłaszać zdarzenia automatycznie.",
+      "long": "Gdy False, raportowanie wymaga jawnego włączenia przez odpowiednią metodę API. Domyślna konfiguracja upstream używa False. Zmiana wpływa na cykl rejestrowania i wymaga testu runtime.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.common.save_events",
+      "title": "save_events",
+      "short": "Określa, czy zdarzenia gaze są zapisywane przez ioHub.",
+      "long": "Przełącznik wpływa na zachowanie magazynu zdarzeń ioHub. Nie zastępuje opcji eksportu danych samego eksperymentu. Wyłączenie może uniemożliwić późniejszą analizę części rejestracji.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.common.stream_events",
+      "title": "stream_events",
+      "short": "Określa, czy ioHub przesyła zdarzenia do procesu eksperymentu.",
+      "long": "Wartość True pozwala aplikacji pobierać bieżące próbki. Przy False część obliczeń na żywo może nie otrzymywać danych. Ustawienie jest osobne od zapisywania zdarzeń.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.common.event_buffer_length",
+      "title": "event_buffer_length",
+      "short": "Limit liczby zdarzeń przechowywanych w buforze ioHub.",
+      "long": "Po osiągnięciu limitu stare zdarzenia mogą być nadpisywane. Zbyt mała wartość podnosi ryzyko utraty danych podczas zatorów. Zbyt duża zwiększa zapotrzebowanie na pamięć.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.common.monitor_event_types",
+      "title": "monitor_event_types",
+      "short": "Lista typów zdarzeń, które ioHub ma odbierać lub udostępniać.",
+      "long": "MouseGaze pozwala rejestrować między innymi próbki monokularne oraz zdarzenia fiksacji, sakad i mrugnięć. Tobii używa własnego typu próbek binokularnych. Nie należy kopiować listy bezpośrednio pomiędzy sterownikami różnych urządzeń.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.enable",
+      "title": "Calibration enable",
+      "short": "Włącza kalibrację urządzenia obsługiwanego przez ioHub.",
+      "long": "Występuje w konfiguracji MouseGaze jako ustawienie calibration.enable. Ustawienie kalibracji może mieć inne znaczenie w zależności od sterownika. Przed użyciem na sprzęcie sprawdź zachowanie ioHub.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.type",
+      "title": "Calibration type",
+      "short": "Wybiera liczbę punktów kalibracji: THREE, FIVE albo NINE.",
+      "long": "Więcej punktów może ułatwić dopasowanie kalibracji na większym obszarze ekranu. Obsługiwane tryby zależą od implementacji sterownika. Oryginalne przykłady używają THREE_POINTS.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.randomize",
+      "title": "Calibration randomize",
+      "short": "Decyduje o losowej kolejności punktów kalibracji.",
+      "long": "Przy True kolejność wyświetlania punktów może się zmieniać. Przy False punkty mogą następować w ustalonym porządku. Wybierz ustawienie zgodne z protokołem badania.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.auto_pace",
+      "title": "Calibration auto_pace",
+      "short": "Automatycznie przełącza punkty kalibracji bez dodatkowego klikania.",
+      "long": "Gdy True, przejście między punktami odbywa się w oparciu o czas. Przy False operator lub uczestnik może musieć potwierdzić dalszy krok. Zależy to od implementacji ioHub.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.pacing_speed",
+      "title": "Calibration pacing_speed",
+      "short": "Czas ekspozycji punktu kalibracji przy automatycznym przejściu.",
+      "long": "Parametr wyrażany jest w sekundach dla auto_pace True. Przy auto_pace False jest ignorowany w oryginalnej konfiguracji. Zbyt krótka ekspozycja może utrudnić poprawną fiksację.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.screen_background_color",
+      "title": "Calibration background",
+      "short": "Kolor tła ekranu kalibracyjnego.",
+      "long": "Jest to oddzielne ustawienie od tła bodźców eksperymentalnych. Dobre zestawienie z barwami celu kalibracyjnego zwiększa jego czytelność. Konfiguracja przykładowa ustawia tło na czarne.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_type",
+      "title": "Calibration target type",
+      "short": "Typ grafiki pokazywanej jako cel kalibracji.",
+      "long": "Oryginalny sterownik Tobii obsługuje CIRCLE_TARGET. Dostępność innych typów zależy od implementacji. Zmieniaj tylko po weryfikacji wsparcia urządzenia.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.color_type",
+      "title": "Calibration color type",
+      "short": "Sposób interpretacji wartości kolorów celów kalibracyjnych.",
+      "long": "W udostępnionym pliku ioHub używane jest rgb. Nie jest to parametr barwy samego tekstu ani przycisków eksperymentu. Wartości muszą być zgodne z wymaganiami PsychoPy.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.unit_type",
+      "title": "Calibration unit type",
+      "short": "Jednostka współrzędnych i rozmiarów elementów kalibracji.",
+      "long": "Konfiguracja przykładowa używa pix. Zmiana jednostek wymaga konsekwentnego przeliczenia rozmiarów i ruchów celu. Nie należy jej wykonywać bez testu wyświetlania.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.outer_diameter",
+      "title": "Outer diameter",
+      "short": "Średnica zewnętrznego koła celu kalibracji.",
+      "long": "Pierścień zewnętrzny jest rysowany przed częścią wewnętrzną. W pliku upstream wielkość podawana jest w jednostkach kalibracji, domyślnie w pikselach. Należy zachować proporcje względem inner_diameter.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.outer_stroke_width",
+      "title": "Outer stroke width",
+      "short": "Grubość konturu zewnętrznego okręgu kalibracji.",
+      "long": "Wartość steruje widoczną krawędzią zewnętrznego pierścienia. Współdziała z jego kolorem oraz wypełnieniem. Zbyt cienki kontur może być słabo widoczny.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.outer_fill_color",
+      "title": "Outer fill color",
+      "short": "Kolor wypełnienia zewnętrznego okręgu.",
+      "long": "Okrąg zewnętrzny jest częścią wizualnego celu kalibracji. Ustawienie działa niezależnie od obramowania. Wybierz kolor zapewniający kontrast względem tła kalibracji.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.outer_line_color",
+      "title": "Outer line color",
+      "short": "Kolor obwódki zewnętrznego okręgu.",
+      "long": "Barwa jest używana razem z outer_stroke_width. Należy dobrać ją do tła i wypełnienia. Zmiana nie wpływa na strumień próbek gaze.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.inner_diameter",
+      "title": "Inner diameter",
+      "short": "Średnica środkowego, mniejszego punktu kalibracji.",
+      "long": "Wewnętrzne koło jest nakładane na zewnętrzny cel. Zwykle powinno być mniejsze od outer_diameter. Pomaga uczestnikowi utrzymywać precyzyjną fiksację.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.inner_stroke_width",
+      "title": "Inner stroke width",
+      "short": "Grubość konturu wewnętrznego punktu.",
+      "long": "Parametr określa szerokość linii narysowanej wokół środka celu. Wpływa tylko na jego prezentację. Wartość powinna pasować do rozdzielczości i rozmiaru wewnętrznego koła.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.inner_fill_color",
+      "title": "Inner fill color",
+      "short": "Kolor wypełnienia wewnętrznego punktu.",
+      "long": "Kolor powinien odcinać się od wypełnienia zewnętrznego. W źródłowych ustawieniach stosowana jest szarość. Ułatwia rozróżnienie centrum celu kalibracyjnego.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.inner_line_color",
+      "title": "Inner line color",
+      "short": "Kolor konturu wewnętrznego koła.",
+      "long": "Jest to barwa linii rysowanej na krawędzi wewnętrznego punktu. Stosowana jest wraz z inner_stroke_width. Nie zmienia parametrów rejestrowania ani modelu gaze.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.animate.enable",
+      "title": "Animation enable",
+      "short": "Włącza animowany ruch celu kalibracyjnego.",
+      "long": "Gdy False, cel może przechodzić skokowo między pozycjami. Gdy True, wykorzystywane są ustawienia prędkości i skalowania. Działanie jest zależne od implementacji ioHub.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.animate.movement_velocity",
+      "title": "Movement velocity",
+      "short": "Prędkość przesuwania się celu kalibracji w pikselach na sekundę.",
+      "long": "Wartość reguluje płynny ruch do kolejnej pozycji. Zbyt szybki ruch może być trudny do śledzenia wzrokiem. Ustawienie działa w połączeniu z włączeniem animacji.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.animate.expansion_ratio",
+      "title": "Expansion ratio",
+      "short": "Maksymalne powiększenie zewnętrznego koła celu.",
+      "long": "Wartość jest mnożnikiem outer_diameter. Dla 1.0 cel nie ulega powiększeniu. Większe wartości tworzą silniej widoczną animację celu.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.animate.expansion_speed",
+      "title": "Expansion speed",
+      "short": "Tempo zmiany średnicy celu w pikselach na sekundę.",
+      "long": "Parametr określa szybkość powiększania okręgu podczas animacji. Wpływa na wrażenie ruchu celu. Nie zmienia szybkości próbkowania Tobii ani MouseGaze.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.calibration.target_attributes.animate.contract_only",
+      "title": "Contract only",
+      "short": "Ogranicza animację rozmiaru do kurczenia celu.",
+      "long": "Gdy True, cel może przechodzić tylko od stanu powiększonego do normalnego. Przy False może najpierw rosnąć i następnie maleć. Działanie wymaga włączonej animacji.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.runtime_settings.sampling_rate",
+      "title": "Sampling rate",
+      "short": "Żądana częstotliwość próbkowania eye-trackera w Hz, zależna od sterownika.",
+      "long": "MouseGaze w konfiguracji upstream przewiduje 50 lub 100 Hz, natomiast przykładowy Tobii podaje 60 Hz. Wartość jest ustawieniem sterownika ioHub, a nie przełącznikiem częstotliwości monitora. Urządzenie fizyczne może nie obsługiwać danej częstotliwości; GUI jej nie negocjuje ani nie weryfikuje sprzętowo.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.runtime_settings.track_eyes",
+      "title": "Track eyes",
+      "short": "Określa, z którego oka pochodzą próbki gaze.",
+      "long": "Oryginalny MouseGaze zgłasza próbki monokularne RIGHT_EYE. Sterownik Tobii w tym repozytorium opisuje tryb BINOCULAR. Nie należy zmieniać tych wartości na nieobsługiwane przez dany sterownik.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.controls.move",
+      "title": "MouseGaze move",
+      "short": "Przycisk wyzwalający symulowane próbki gaze w źródłowym MouseGaze.",
+      "long": "Źródłowy sterownik ioHub MouseGaze ma ustawienie `controls.move`, domyślnie `RIGHT_BUTTON`. Przycisk wykorzystywany do symulacji gaze należy odróżniać od lewego kliknięcia odpowiedzi. Ta dokumentacja opisuje upstream; niestandardowe adaptery mogą implementować inną politykę przycisku.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.controls.blink",
+      "title": "MouseGaze blink",
+      "short": "Kombinacja przycisków emulująca mrugnięcie w MouseGaze.",
+      "long": "Źródłowy MouseGaze korzysta z kombinacji lewego i prawego przycisku do symulacji zdarzenia mrugnięcia. Przytrzymywanie przycisku gaze podczas klikania odpowiedzi może więc prowadzić do konfliktów gestów. Ustawienie dotyczy emulacji ioHub, nie wykrywania fizycznego mrugania przez Tobii.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.controls.saccade_threshold",
+      "title": "Saccade threshold",
+      "short": "Próg detekcji sakad w stopniach kąta widzenia.",
+      "long": "Parametr należy do sterownika MouseGaze i steruje generowaniem syntetycznych zdarzeń sakad. Nie jest progiem rozpoznawania kliknięć ani filtrowaniem Tobii w trybie raw_data. Interpretacja zależy od geometrii ekranu.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.tobii.enable",
+      "title": "Tobii enable",
+      "short": "Decyduje, czy ioHub ładuje fizyczny sterownik Tobii.",
+      "long": "W oryginalnym pliku ustawienie jest włączone. Oprogramowanie musi mieć dostęp do kompatybilnego urządzenia. Włączenie opcji nie zastępuje fizycznego podłączenia i sprawdzenia sterowników.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.tobii.model_name",
+      "title": "Tobii model_name",
+      "short": "Opcjonalny filtr konkretnego modelu eye-trackera.",
+      "long": "Jeżeli nazwa modelu jest podana, ioHub szuka urządzeń zgodnych z filtrem. Gdy podłączony jest jeden zgodny Tobii, pole można zostawić puste. Nieprawidłowy filtr może powodować pozorny brak urządzenia.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.tobii.serial_number",
+      "title": "Tobii serial_number",
+      "short": "Opcjonalny filtr numeru seryjnego fizycznego urządzenia Tobii.",
+      "long": "Numer seryjny może być potrzebny, gdy dostępnych jest kilka kompatybilnych trackerów. Puste ustawienie nie wymusza konkretnego urządzenia, a błędne może uniemożliwić wybór. GUI nie skanuje urządzeń ani nie weryfikuje numerów seryjnych.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "iohub.tobii.manufacturer_name",
+      "title": "Tobii manufacturer_name",
+      "short": "Informacyjna nazwa producenta zapisywana w konfiguracji ioHub.",
+      "long": "Oryginalny przykład podaje Tobii Technology. Pole pełni rolę metadanych i nie określa sposobu kalibracji. Nie zastępuje model_name ani serial_number.",
+      "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
+      "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/eyetracker_config.yaml",
+      "status": "iohub-only"
+    },
+    {
+      "key": "bbox_model.folder",
+      "title": "Folder własnego modelu bbox",
+      "short": "Katalog zawierający opcjonalny zewnętrzny model wyznaczania regionów.",
+      "long": "Upstream pozwala podać własny moduł modelu, gdy wbudowane strategie bbox są niewystarczające. Folder powinien zawierać importowalny kod zgodny z interfejsem CustomModel. Funkcja nie jest obecnie obsługiwana specjalnym formularzem GUI.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "yaml-only"
+    },
+    {
+      "key": "bbox_model.module",
+      "title": "Moduł własnego modelu bbox",
+      "short": "Nazwa modułu Pythona dostarczającego własny model obszarów.",
+      "long": "Parametr jest wykorzystywany do wskazania klasy implementującej CustomModel. Odpowiedni kod musi być dostępny w runtime Pythona. Nie należy zmieniać nazwy bez sprawdzenia możliwości importu.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "yaml-only"
+    },
+    {
+      "key": "bbox_model.class",
+      "title": "Klasa własnego modelu bbox",
+      "short": "Nazwa klasy Python implementującej obsługę własnego bbox.",
+      "long": "Klasa powinna realizować kontrakt CustomModel z metodami prepare_model, predict oraz process. Błędna nazwa powoduje brak możliwości wczytania niestandardowego modelu. Parametr pozostaje funkcją dla zaawansowanych użytkowników.",
+      "group": "Dataset / output",
+      "source": "https://github.com/sbobek/tobii-pytracker#configuration",
+      "status": "yaml-only"
+    }
+  ]
+}

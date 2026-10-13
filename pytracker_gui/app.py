@@ -197,6 +197,7 @@ class PytrackerGUI(ttk.Frame):
             self.desc_label.configure(text=f'{self._t(self.demo.description)}  |  '
                 f'{self._t("modalność: ")}{self.demo.modality}  |  '
                 f'{self._t("backend: ")}{self.demo.engine}')
+        self.demo_label.configure(text='Konfiguracja eksperymentu' if self.language_code == 'pl' else 'Experiment setup')
         self._gaze_changed()
         self._refresh_all()
         if self.on_language_change is not None:
@@ -359,7 +360,7 @@ class PytrackerGUI(ttk.Frame):
         heading=ttk.Frame(work)
         heading.grid(row=0,column=0,sticky='ew',pady=(0,6))
         heading.columnconfigure(0,weight=1)
-        self.demo_label=ttk.Label(heading,text='Experiment setup',style='Heading.TLabel')
+        self.demo_label=ttk.Label(heading,text='Konfiguracja eksperymentu' if self.language_code == 'pl' else 'Experiment setup',style='Heading.TLabel')
         self.demo_label.grid(row=0,column=0,sticky='w')
         self._info_label(heading,'Blok:','gui.block').grid(row=0,column=1,padx=(10,3))
         self.block_combo=ttk.Combobox(heading,textvariable=self.block_name,state='readonly',width=24)

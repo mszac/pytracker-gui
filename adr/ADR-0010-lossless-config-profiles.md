@@ -1,0 +1,3 @@
+# ADR-0010 — Immutable bases, lossless YAML copies
+Status: PROPOSAL.
+Decision: treat original `configs/*.yaml` and `examples/*/config.native*.yaml` as immutable; edit user profiles as copies, stage per-run snapshot. Preserve unknown fields, comments and ordering using a round-trip-capable YAML mechanism such as ruamel.yaml. Resolve dataset/output paths relative to explicit demo cwd, not YAML file location. Preserve per-demo adapter extras (`font_height`, `wrap_fraction`), variant PL and dual block configs. Gate: 9 YAML round-trip and sources byte identical, absolute/relative path tests Windows/Linux.

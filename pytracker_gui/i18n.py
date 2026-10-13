@@ -7,6 +7,13 @@ manual text remain the default. No Python/PsychoPy or network dependency.
 LANGUAGES = ('pl', 'en')
 
 UI_EN = {
+    'Podręcznik': 'Manual',
+    'Ustawienia GUI': 'GUI Settings',
+    'Kolor punktu fiksacji': 'Fixation dot color',
+    'Model obszarów': 'Bounding box model',
+    'Poziom rejestrowania': 'Log level',
+    'Rozmiar punktu fiksacji': 'Fixation dot size',
+    'Wysokość czcionki': 'Font height',
     'Nie można nadpisać oryginalnej konfiguracji projektu startowego.': 'Cannot overwrite the original starter-project configuration.',
     'Automatyczny układ: tobii-pytracker/{tobii-pytracker-demo,pytracker-gui}. Uruchamianie projektów dostępne w zakładce Uruchomienie.': 'Automatic layout: tobii-pytracker/{tobii-pytracker-demo,pytracker-gui}. Project launch is available on the Launch tab.',
     'Zapisano zmiany wyłącznie w pamięci. Zapisać profil przed zmianą projektu startowego?': 'Changes exist only in memory. Save the profile before switching starter projects?',

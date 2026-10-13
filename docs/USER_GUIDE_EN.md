@@ -1,6 +1,6 @@
-# pytracker-gui v0.2.17 — user guide
+# pytracker-gui — user guide (reviewed for v0.2.33)
 
-**Current, English-language guide.** Polish counterpart: [USER_GUIDE_PL.md](USER_GUIDE_PL.md). For installation on Windows/Git Bash, see [README_WINDOWS_GIT_BASH_EN.md](../README_WINDOWS_GIT_BASH_EN.md). Earlier version-specific documents remain historical snapshots; this guide describes the **v0.2.17** application.
+**Current, English-language guide.** Polish counterpart: [USER_GUIDE_PL.md](USER_GUIDE_PL.md). For installation on Windows/Git Bash, see [README_WINDOWS_GIT_BASH_EN.md](../README_WINDOWS_GIT_BASH_EN.md). Earlier version-specific documents remain historical snapshots; this guide describes the current **v0.2.33** interface while retaining historical feature notes where explicitly dated.
 
 ## 1. Purpose and boundaries
 
@@ -119,3 +119,11 @@ Configuration validation and collection checks do not establish scientific valid
 **Historical correction:** The archived v0.1.4 description **“not yet an experiment launcher”** is obsolete; v0.2.17 launches the existing supported demos.
 
 **v0.2.17:** The four Environment buttons now share the width set by Load repository, with all other button appearance unchanged. [GUI Documentation notes](GUI_DOCUMENTATION_V0217_EN.md).
+
+## GUI Settings and interface help (v0.2.33)
+
+**GUI Settings** displays startup window sizing, fixed Home tile dimensions, application/repository paths, current preferences and a palette editor. The path and preference summary fields on this page are **read-only**; use the appropriate **Experiment → Environment** controls for supported path changes. The blue **i** icons show concise descriptions and their **man** links open the extended **GUI Settings reference** under **Manual → GUI Documentation**. They do not open or modify experiment-parameter YAML.
+
+**Save window size** affects the next GUI launch (the screen may constrain the requested size). The four Home tile images remain at their original pixel size. Color entries accept six-digit `#RRGGBB` values; **Save colors** validates and persists the complete palette, which takes effect after restarting the GUI. **Restore defaults** changes only the values shown in the editor until **Save colors** is pressed. Icon tint applies to theme-supported icons, not necessarily selected-state icons or pre-rendered tile art.
+
+The **Manual → Experiment parameter** documentation is separate from **GUI Documentation**. The former describes experiment configuration parameters; the latter describes GUI-only behavior and local application settings. Language selection for interface labels is separate from help language and from the language of stimuli in starter experiments.

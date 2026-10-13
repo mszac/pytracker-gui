@@ -13,6 +13,7 @@ from .layout import canonical_roots
 from .upstream_docs import UpstreamRstBrowser
 from .demo_docs import DemoProjectDocsBrowser
 from .gui_docs import GuiDocumentationBrowser
+from .help_widgets import InfoButton, InfoPopover
 
 
 SCREEN_COPY = {
@@ -36,17 +37,17 @@ GUI_SETTINGS_TEXTS = {
         'window_size': 'Rozmiar przy uruchomieniu', 'save': 'Zapisz rozmiar',
         'window_hint': 'Zmiana obowiązuje od następnego uruchomienia. Na mniejszych ekranach rozmiar jest ograniczany do dostępnego miejsca.',
         'tile_size': 'Kafelki głównego panelu', 'tile_value': '546 × 365 px · stały rozmiar',
-        'gui_home': 'Katalog danych GUI', 'projects_root': 'Historia projektów',
-        'demo_root': 'Repozytorium dem', 'upstream_root': 'Oryginalne repozytorium',
+        'gui_home': 'Katalog danych GUI', 'projects_root': 'Katalog projektów i historii uruchomień',
+        'demo_root': 'Repozytorium projektów startowych', 'upstream_root': 'Oryginalne repozytorium',
         'python': 'Interpreter Python',
-        'path_hint': 'Ścieżki można zmieniać i zapisywać w sekcji Environment ekranu Experiment.',
+        'path_hint': 'Ścieżki są tutaj tylko do odczytu. Obsługiwane ścieżki repozytoriów można zmienić w Eksperyment → Środowisko.',
         'language': 'Język interfejsu', 'help_language': 'Język podpowiedzi',
-        'auto_logs': 'Auto-show Logs', 'journal': 'Dziennik konsoli',
+        'auto_logs': 'Automatyczne otwieranie logów', 'journal': 'Dziennik konsoli',
         'journal_value': 'Jeden log narastający · .log / .log.part',
         'saved': 'Rozmiar zapisany. Zostanie użyty przy następnym uruchomieniu.',
         'error': 'Nie udało się zapisać ustawień:',
         'colors': 'Kolory interfejsu',
-        'colors_hint': 'Istniejące parametry ICON_COLOR i COLORS. Wprowadź #RRGGBB; zmiany po ponownym uruchomieniu.',
+        'colors_hint': 'Edytuj istniejące wartości ICON_COLOR i COLORS w formacie #RRGGBB. Zapisz kolory i uruchom ponownie GUI, aby zastosować zmiany.',
         'save_colors': 'Zapisz kolory', 'reset_colors': 'Przywróć domyślne wartości',
         'colors_saved': 'Kolory zapisane. Uruchom GUI ponownie, aby je zastosować.',
         'colors_error': 'Nieprawidłowa wartość #RRGGBB dla:',
@@ -55,19 +56,19 @@ GUI_SETTINGS_TEXTS = {
         'subtitle': 'Application settings and GUI paths · separate from experiment configuration',
         'window': 'Window & appearance', 'paths': 'Paths & environment', 'preferences': 'Preferences',
         'window_size': 'Startup window size', 'save': 'Save window size',
-        'window_hint': 'Takes effect on the next launch. Smaller screens clamp the window to available space.',
+        'window_hint': 'Saved size takes effect at the next launch; smaller displays may limit the actual window size.',
         'tile_size': 'Home dashboard tiles', 'tile_value': '546 × 365 px · fixed size',
         'gui_home': 'GUI data directory', 'projects_root': 'Project history',
         'demo_root': 'Demo repository', 'upstream_root': 'Original upstream repository',
         'python': 'Python interpreter',
-        'path_hint': 'Edit and save repository paths in Experiment → Environment.',
+        'path_hint': 'These paths are read-only here. Edit supported repository paths in Experiment → Environment.',
         'language': 'Interface language', 'help_language': 'Tooltip language',
-        'auto_logs': 'Auto-show Logs', 'journal': 'Console journal',
+        'auto_logs': 'Automatically open Logs', 'journal': 'Console journal',
         'journal_value': 'Single incremental log · .log / .log.part',
         'saved': 'Startup size saved. It will apply on the next launch.',
         'error': 'Could not save settings:',
         'colors': 'Interface colors',
-        'colors_hint': 'Existing ICON_COLOR and COLORS parameters. Enter #RRGGBB; applied on next launch.',
+        'colors_hint': 'Edit existing ICON_COLOR and COLORS values using #RRGGBB. Save, then restart the GUI to apply.',
         'save_colors': 'Save colors', 'reset_colors': 'Restore defaults',
         'colors_saved': 'Colors saved. Restart GUI to apply them.',
         'colors_error': 'Invalid #RRGGBB value for:',
@@ -117,8 +118,8 @@ class DashboardScreen(ttk.Frame):
     def __init__(self, master, on_select, language='pl', root=None):
         super().__init__(master, padding=24)
         self.on_select = on_select
+        # Compatibility metadata: the visible home title is rendered in the header.
         self.title_label = ttk.Label(self, style='DashboardTitle.TLabel')
-        self.title_label.pack(anchor='w', pady=(0, 15))
         viewport = ttk.Frame(self)
         self.viewport = viewport
         viewport.pack(fill='both', expand=True)
@@ -136,6 +137,32 @@ class DashboardScreen(ttk.Frame):
         board.bind('<Configure>', self._update_viewport)
         self.canvas.bind('<Configure>', self._update_viewport)
         viewport.bind('<Configure>', self._update_viewport)
+        assets = Path(__file__).with_name('assets')
+        master_root = root or self.winfo_toplevel()
+        # Static 1128px-wide header shares the fixed tile board's coordinate space.
+        # Draw the title natively; keep only the logo as a small pre-scaled PNG.
+        header = tk.Frame(board, height=102, width=1128, bg=COLORS['surface'])
+        header.grid(row=0, column=0, columnspan=2, sticky='w')
+        header.grid_propagate(False)
+        header_canvas = tk.Canvas(header, width=1128, height=102, bg=COLORS['surface'],
+                                  bd=0, highlightthickness=0)
+        header_canvas.pack()
+        from tkinter import font as tkfont
+        family = ttk.Style(self).lookup('Brand.TButton', 'font')
+        try:
+            brand_family = tkfont.Font(root=self, font=family).actual('family')
+        except tk.TclError:
+            brand_family = 'TkDefaultFont'
+        self._header_font = tkfont.Font(root=self, family=brand_family, size=30, weight='bold')
+        header_canvas.create_text(564, 51, text='pytracker-gui', fill=COLORS['text'],
+                                  font=self._header_font, anchor='center')
+        self._header_logo = tk.PhotoImage(master=master_root,
+                                          file=str(assets / 'dashboard-brand-logo.png'))
+        if (self._header_logo.width(), self._header_logo.height()) != (96, 96):
+            raise ValueError('Incorrect dashboard brand logo size')
+        header_canvas.create_image(1128, 3, image=self._header_logo, anchor='ne')
+        self.header = header
+        self.header_canvas = header_canvas
         # No grid weights or sticky='nsew': an enlarged window leaves free space,
         # and a smaller window cannot stretch or compress any of the four tiles.
         style = ttk.Style(self)
@@ -145,8 +172,6 @@ class DashboardScreen(ttk.Frame):
         style.layout('DashboardImage.TButton', [('Button.label', {'sticky': 'nswe'})])
         self.tile_buttons = {}
         self._tile_images = {}
-        assets = Path(__file__).with_name('assets')
-        master_root = root or self.winfo_toplevel()
         for index, (screen_id, _, _) in enumerate(self.TILES):
             image = tk.PhotoImage(master=master_root, file=str(assets / f'dashboard-{screen_id}.png'))
             if (image.width(), image.height()) != self.TILE_SIZE:
@@ -155,7 +180,7 @@ class DashboardScreen(ttk.Frame):
             tile = ttk.Button(board, style='DashboardImage.TButton',
                               image=image, compound='none', cursor='hand2',
                               command=lambda key=screen_id: self.on_select(key))
-            tile.grid(row=index // 2, column=index % 2, padx=9, pady=9)
+            tile.grid(row=1 + index // 2, column=index % 2, padx=9, pady=9)
             self.tile_buttons[screen_id] = tile
         self.set_language(language)
 
@@ -190,16 +215,30 @@ class DashboardScreen(ttk.Frame):
             self.tile_buttons[screen_id].configure(text=translate(title, language))
 
 
+GUI_HELP_SHORT = {'window': 'Window-size and tile information; the window preset is saved for the next launch.', 'window_size': 'Choose a startup-size preset. The usable display area may limit it.', 'save': 'Save the selected window preset for the next application launch.', 'tile_size': 'The four Home images remain 546 × 365 pixels; resizing does not rescale them.', 'paths': 'These paths are displayed for reference; editable repository paths are in Experiment → Environment.', 'gui_home': 'Application-owned settings and state directory; not a measurement-output folder.', 'projects_root': 'Directory containing GUI projects, profiles, and run histories.', 'demo_root': 'Root of the starter-project examples repository.', 'upstream_root': 'Root of the original tobii-pytracker source repository.', 'python': 'Configured interpreter used to launch experiments; this field is read-only here.', 'preferences': 'Current application preferences, displayed here without edit controls.', 'language': 'Language currently used for interface labels.', 'help_language': 'Language currently selected for experiment parameter help.', 'auto_logs': 'Shows whether the live Logs view opens automatically during a run.', 'journal': 'Each run has a bounded, incrementally written console journal (.log or .log.part).', 'colors': 'Edit the existing theme palette with six-digit RGB values (#RRGGBB).', 'save_colors': 'Validate and save the entire palette. Restart to apply the saved colors.', 'reset_colors': 'Load factory colors into the editor; press Save colors to keep them.', 'ICON_COLOR': 'Color applied to supported inactive UI icons; selected icons may use other colors.'}
+GUI_HELP_TITLES = {key: GUI_SETTINGS_TEXTS["en"].get(key, key) for key in GUI_HELP_SHORT}
+GUI_COLOR_ROLES = {'window': 'Main application window background.', 'surface': 'Background of primary content panels.', 'surface_alt': 'Secondary panel and popover background.', 'field': 'Input fields and inset content areas.', 'hover': 'Hover-state background where the theme supports it.', 'border': 'Panel and control outlines.', 'text': 'Primary text.', 'muted': 'Secondary and less prominent text.', 'accent': 'Primary orange accent for emphasis and selected controls.', 'accent_hover': 'Hover shade of the accent color.', 'accent_text': 'Text drawn on an accent-colored background.', 'selection': 'Selection highlight in supported controls.', 'success': 'Positive status indicators.'}
+for _gui_color in COLORS:
+    GUI_HELP_SHORT.setdefault(_gui_color, GUI_COLOR_ROLES[_gui_color] + " Enter #RRGGBB; save and restart to apply.")
+    GUI_HELP_TITLES.setdefault(_gui_color, _gui_color)
+
+GUI_HELP_SHORT_PL = {'window': 'Informacje o rozmiarze okna i kafelkach. Wybrany rozmiar okna zostanie użyty przy następnym uruchomieniu.', 'window_size': 'Wybierz początkowy rozmiar okna. Obszar roboczy mniejszego ekranu może go ograniczyć.', 'save': 'Zapisz wybrany rozmiar okna do zastosowania przy następnym uruchomieniu aplikacji.', 'tile_size': 'Cztery obrazy kafelków panelu głównego zachowują rozmiar 546 × 365 pikseli. Zmiana rozmiaru okna ich nie skaluje.', 'paths': 'Ścieżki służą tutaj tylko do odczytu. Obsługiwane ścieżki repozytoriów zmienisz w Eksperyment → Środowisko.', 'gui_home': 'Katalog ustawień i stanu aplikacji GUI, a nie katalog z wynikami pomiarów.', 'projects_root': 'Katalog projektów użytkownika, profili i historii uruchomień.', 'demo_root': 'Katalog główny repozytorium dostarczonych projektów startowych.', 'upstream_root': 'Katalog główny oryginalnego repozytorium tobii-pytracker.', 'python': 'Interpreter używany do uruchamiania eksperymentów. Tutaj ścieżka jest tylko do odczytu.', 'preferences': 'Bieżące preferencje aplikacji wyświetlane bez możliwości edycji na tej stronie.', 'language': 'Język etykiet i menu interfejsu aplikacji.', 'help_language': 'Język opisów parametrów eksperymentu i odpowiadającego im manuala.', 'auto_logs': 'Informuje, czy podgląd logów otwiera się automatycznie podczas uruchomienia eksperymentu.', 'journal': 'Każde uruchomienie ma jeden narastający dziennik konsoli (.log lub .log.part) z ograniczonym buforem.', 'colors': 'Zmieniaj istniejącą paletę GUI, podając sześciocyfrowe wartości RGB (#RRGGBB).', 'save_colors': 'Sprawdź i zapisz całą paletę. Zapisane kolory zostaną zastosowane po ponownym uruchomieniu GUI.', 'reset_colors': 'Wczytaj kolory fabryczne do edytora. Aby je zachować, wybierz Zapisz kolory.', 'ICON_COLOR': 'Kolor obsługiwanych nieaktywnych ikon GUI. Ikony zaznaczonych sekcji mogą używać innych kolorów.'}
+GUI_COLOR_ROLES_PL = {'window': 'Tło głównego okna aplikacji.', 'surface': 'Tło głównych paneli treści.', 'surface_alt': 'Tło paneli pomocniczych i okienek podpowiedzi.', 'field': 'Tło pól wejściowych i zagłębionych obszarów treści.', 'hover': 'Tło po najechaniu kursorem w obsługiwanych kontrolkach.', 'border': 'Obramowania paneli i kontrolek.', 'text': 'Podstawowy kolor tekstu.', 'muted': 'Tekst drugoplanowy i mniej wyróżniony.', 'accent': 'Główny pomarańczowy akcent dla wyróżnień i zaznaczonych kontrolek.', 'accent_hover': 'Odcień akcentu po najechaniu kursorem.', 'accent_text': 'Tekst wyświetlany na tle w kolorze akcentu.', 'selection': 'Podświetlenie zaznaczenia w obsługiwanych kontrolkach.', 'success': 'Wskaźniki pozytywnego statusu.'}
+for _gui_color_pl in COLORS:
+    GUI_HELP_SHORT_PL.setdefault(_gui_color_pl, GUI_COLOR_ROLES_PL[_gui_color_pl] + " Wpisz #RRGGBB, zapisz kolory i uruchom ponownie GUI.")
+
 class GuiSettingsScreen(ttk.Frame):
     """Lightweight GUI settings view; never edits experiment YAML or repository data."""
 
     WINDOW_PRESETS = ('940 × 650', '1100 × 800', '1300 × 960', '1429 × 1097', '1600 × 1000')
 
-    def __init__(self, master, settings_provider, save_window_size, language='pl', save_colors=None):
+    def __init__(self, master, settings_provider, save_window_size, language='pl', save_colors=None, on_gui_manual=None):
         super().__init__(master, padding=(15, 12))
         self.settings_provider = settings_provider
         self.save_window_size = save_window_size
         self.save_colors = save_colors
+        self.on_gui_manual = on_gui_manual
+        self._info_popover = InfoPopover(self.winfo_toplevel(), self._gui_help_record, self._open_gui_manual)
         self._color_vars = {}
         self._color_swatches = {}
         self.language = language if language in GUI_SETTINGS_TEXTS else 'pl'
@@ -221,7 +260,7 @@ class GuiSettingsScreen(ttk.Frame):
                         foreground=COLORS['text'], font=('TkDefaultFont', 17, 'bold'))
         style.configure('GuiSettingsSubtitle.TLabel', background=COLORS['surface'],
                         foreground=COLORS['muted'], font=('TkDefaultFont', 11))
-        self.title = ttk.Label(self, style='GuiSettingsTitle.TLabel', text='GUI Settings')
+        self.title = ttk.Label(self, style='GuiSettingsTitle.TLabel', text='Ustawienia GUI' if self.language == 'pl' else 'GUI Settings')
         self.title.pack(anchor='w')
         self.subtitle = ttk.Label(self, style='GuiSettingsSubtitle.TLabel', text=self.tr('subtitle'))
         self.subtitle.pack(anchor='w', pady=(3, 10))
@@ -243,19 +282,22 @@ class GuiSettingsScreen(ttk.Frame):
         self.window_card = self._card('window')
         control = tk.Frame(self.window_card, bg=COLORS['field'])
         control.pack(fill='x', padx=15, pady=(0, 7))
-        self._caption(control, 'window_size').pack(side='left', padx=(0, 15))
+        self._caption(control, 'window_size').pack(side='left', padx=(0, 4))
+        self._info(control, 'window_size').pack(side='left', padx=(0, 12))
         self.preset_combo = ttk.Combobox(control, textvariable=self.window_size_var,
                                           state='readonly', width=17, values=self.WINDOW_PRESETS)
         self.preset_combo.pack(side='left', padx=(0, 12))
         self.save_button = ttk.Button(control, text=self.tr('save'), command=self._save)
         self.save_button.pack(side='left')
+        self._info(control, 'save').pack(side='left', padx=(7, 0))
         self.status = ttk.Label(self.window_card, text='', style='GuiSettingsSubtitle.TLabel')
         self.status.pack(anchor='w', padx=15, pady=(0, 5))
         self.window_hint = self._hint(self.window_card, 'window_hint')
         self.window_hint.pack(anchor='w', padx=15, pady=(0, 10))
         tiles = tk.Frame(self.window_card, bg=COLORS['field'])
         tiles.pack(fill='x', padx=15, pady=(0, 12))
-        self._caption(tiles, 'tile_size').pack(side='left')
+        self._caption(tiles, 'tile_size').pack(side='left', padx=(0, 5))
+        self._info(tiles, 'tile_size').pack(side='left')
         self.tile_value = tk.Label(tiles, text=self.tr('tile_value'), bg=COLORS['field'],
                                    fg=COLORS['text'], font=('Segoe UI', 10))
         self.tile_value.pack(side='left', padx=(20, 0))
@@ -264,7 +306,8 @@ class GuiSettingsScreen(ttk.Frame):
         for key in ('gui_home', 'projects_root', 'demo_root', 'upstream_root', 'python'):
             line = tk.Frame(self.paths_card, bg=COLORS['field'])
             line.pack(fill='x', padx=15, pady=(0, 8))
-            self._caption(line, key, width=25).pack(side='left', padx=(0, 14))
+            self._caption(line, key, width=25).pack(side='left', padx=(0, 5))
+            self._info(line, key).pack(side='left', padx=(0, 9))
             var = tk.StringVar(self)
             entry = ttk.Entry(line, textvariable=var, state='readonly')
             entry.pack(side='left', fill='x', expand=True)
@@ -276,7 +319,8 @@ class GuiSettingsScreen(ttk.Frame):
         for key in ('language', 'help_language', 'auto_logs', 'journal'):
             line = tk.Frame(self.prefs_card, bg=COLORS['field'])
             line.pack(fill='x', padx=15, pady=(0, 9))
-            self._caption(line, key, width=25).pack(side='left', padx=(0, 14))
+            self._caption(line, key, width=25).pack(side='left', padx=(0, 5))
+            self._info(line, key).pack(side='left', padx=(0, 9))
             value = tk.Label(line, text='', bg=COLORS['field'], fg=COLORS['text'],
                              anchor='w', font=('Segoe UI', 10))
             value.pack(side='left')
@@ -296,6 +340,7 @@ class GuiSettingsScreen(ttk.Frame):
             line.grid(row=row, column=col, sticky='w', padx=(0, 38), pady=(0, 7))
             tk.Label(line, text=key, width=15, anchor='w', bg=COLORS['field'],
                      fg=COLORS['muted'], font=('TkDefaultFont', 10)).pack(side='left')
+            self._info(line, key).pack(side='left', padx=(0, 3))
             var = tk.StringVar(self)
             entry = ttk.Entry(line, textvariable=var, width=10)
             entry.pack(side='left', padx=(5, 7))
@@ -308,12 +353,59 @@ class GuiSettingsScreen(ttk.Frame):
         actions.pack(anchor='w', padx=15, pady=(7, 5))
         self.save_colors_button = ttk.Button(actions, text=self.tr('save_colors'),
                                              command=self._save_colors)
-        self.save_colors_button.pack(side='left', padx=(0, 10))
+        self.save_colors_button.pack(side='left', padx=(0, 4))
+        self._info(actions, 'save_colors').pack(side='left', padx=(0, 10))
         self.reset_colors_button = ttk.Button(actions, text=self.tr('reset_colors'),
                                               command=self._reset_colors)
         self.reset_colors_button.pack(side='left')
+        self._info(actions, 'reset_colors').pack(side='left', padx=(7, 0))
         self.colors_status = ttk.Label(self.colors_card, style='GuiSettingsSubtitle.TLabel')
         self.colors_status.pack(anchor='w', padx=15, pady=(0, 9))
+        self._bind_section_wheel()
+
+    def _gui_help_record(self, key):
+        catalog = GUI_HELP_SHORT_PL if self.language == 'pl' else GUI_HELP_SHORT
+        title = (GUI_SETTINGS_TEXTS['pl'].get(key, key) if self.language == 'pl'
+                 else GUI_HELP_TITLES.get(key, key))
+        return {'title': title, 'short': catalog.get(key,
+                'Kolor interfejsu GUI. Wpisz #RRGGBB i uruchom ponownie GUI.' if self.language == 'pl'
+                else 'GUI appearance color. Enter a #RRGGBB value; restart to apply.')}
+
+    def _info(self, parent, key):
+        return InfoButton(parent, help_key=key, callback=self._info_popover.toggle)
+
+    def _open_gui_manual(self, key):
+        if self.on_gui_manual is not None:
+            self.on_gui_manual(key)
+
+    def _bind_section_wheel(self):
+        # A page-local bindtag reaches nested labels, frames, entries and buttons
+        # without a global wheel handler or modifying their other bindings.
+        tag = 'GuiSettingsWheel_' + str(id(self))
+
+        def attach(widget):
+            widget.bindtags((tag,) + tuple(t for t in widget.bindtags() if t != tag))
+            for child in widget.winfo_children():
+                attach(child)
+
+        attach(self)
+        self.bind_class(tag, '<MouseWheel>', self._scroll_wheel)
+        self.bind_class(tag, '<Button-4>', self._scroll_wheel)
+        self.bind_class(tag, '<Button-5>', self._scroll_wheel)
+
+    def _scroll_wheel(self, event):
+        if event.num == 4:
+            steps = -1
+        elif event.num == 5:
+            steps = 1
+        else:
+            delta = event.delta
+            if not delta:
+                return
+            # Windows emits multiples of 120; macOS can emit smaller deltas.
+            steps = -int(delta / 120) if abs(delta) >= 120 else (-1 if delta > 0 else 1)
+        self.settings_canvas.yview_scroll(steps, 'units')
+        return 'break'
 
     def _sync_scrollregion(self, _event=None):
         self.settings_canvas.configure(scrollregion=self.settings_canvas.bbox('all'))
@@ -344,6 +436,7 @@ class GuiSettingsScreen(ttk.Frame):
 
     def set_language(self, language):
         self.language = language if language in GUI_SETTINGS_TEXTS else 'pl'
+        self.title.configure(text='Ustawienia GUI' if self.language == 'pl' else 'GUI Settings')
         self.subtitle.configure(text=self.tr('subtitle'))
         for key, widget in self._section_titles.items():
             widget.configure(text=self.tr(key))
@@ -418,6 +511,9 @@ class GuiSettingsScreen(ttk.Frame):
             return
         self.status.configure(text=self.tr('saved'))
 
+
+# Polish presentation titles in Manual → Index only; JSON and rendered manuals stay unchanged.
+POLISH_INDEX_TITLES = {'gui.demo_root': 'Katalog projektów demonstracyjnych', 'gui.upstream_root': 'Katalog repozytorium źródłowego', 'gui.gaze': 'Źródło danych o spojrzeniu', 'dataset.image.bbox_model': 'Model obszarów obrazu', 'dataset.text.bbox_model': 'Model obszarów tekstu', 'dataset.time_series.bbox_model': 'Model obszarów szeregu czasowego', 'dataset.text.font_height': 'Wysokość czcionki tekstu', 'runtime.enable_voice': 'Rejestrowanie głosu / --enable_voice', 'runtime.raw_data': 'Dane surowe / --raw_data', 'runtime.log_level': 'Poziom rejestrowania / --log_level', 'iohub.mouse.name': 'Nazwa urządzenia MouseGaze', 'iohub.mouse.auto_report_events': 'Automatyczne zgłaszanie zdarzeń MouseGaze', 'iohub.common.save_events': 'Zapisywanie zdarzeń', 'iohub.common.stream_events': 'Strumieniowanie zdarzeń', 'iohub.common.event_buffer_length': 'Pojemność bufora zdarzeń', 'iohub.common.monitor_event_types': 'Monitorowane typy zdarzeń', 'iohub.calibration.enable': 'Włączenie kalibracji', 'iohub.calibration.type': 'Typ kalibracji', 'iohub.calibration.randomize': 'Losowa kolejność celów kalibracji', 'iohub.calibration.auto_pace': 'Automatyczne tempo kalibracji', 'iohub.calibration.pacing_speed': 'Szybkość kalibracji', 'iohub.calibration.screen_background_color': 'Kolor tła kalibracji', 'iohub.calibration.target_type': 'Typ celu kalibracyjnego', 'iohub.calibration.color_type': 'Typ zapisu koloru', 'iohub.calibration.unit_type': 'Jednostki wymiarów', 'iohub.calibration.target_attributes.outer_diameter': 'Średnica zewnętrzna celu', 'iohub.calibration.target_attributes.outer_stroke_width': 'Grubość zewnętrznego obrysu', 'iohub.calibration.target_attributes.outer_fill_color': 'Kolor wypełnienia zewnętrznego', 'iohub.calibration.target_attributes.outer_line_color': 'Kolor zewnętrznego obrysu', 'iohub.calibration.target_attributes.inner_diameter': 'Średnica wewnętrzna celu', 'iohub.calibration.target_attributes.inner_stroke_width': 'Grubość wewnętrznego obrysu', 'iohub.calibration.target_attributes.inner_fill_color': 'Kolor wypełnienia wewnętrznego', 'iohub.calibration.target_attributes.inner_line_color': 'Kolor wewnętrznego obrysu', 'iohub.calibration.target_attributes.animate.enable': 'Włączenie animacji celu', 'iohub.calibration.target_attributes.animate.movement_velocity': 'Prędkość ruchu celu', 'iohub.calibration.target_attributes.animate.expansion_ratio': 'Współczynnik powiększenia celu', 'iohub.calibration.target_attributes.animate.expansion_speed': 'Szybkość powiększania celu', 'iohub.calibration.target_attributes.animate.contract_only': 'Tylko zmniejszanie celu', 'iohub.runtime_settings.sampling_rate': 'Częstotliwość próbkowania', 'iohub.runtime_settings.track_eyes': 'Śledzone oczy', 'iohub.controls.move': 'Sterowanie ruchem MouseGaze', 'iohub.controls.blink': 'Symulacja mrugnięcia MouseGaze', 'iohub.controls.saccade_threshold': 'Próg sakkady', 'iohub.tobii.enable': 'Włączenie urządzenia Tobii', 'iohub.tobii.model_name': 'Nazwa modelu Tobii', 'iohub.tobii.serial_number': 'Numer seryjny Tobii', 'iohub.tobii.manufacturer_name': 'Nazwa producenta Tobii', 'bbox_model.folder': 'Katalog własnego modelu obszarów', 'bbox_model.module': 'Moduł własnego modelu obszarów', 'bbox_model.class': 'Klasa własnego modelu obszarów'}
 
 class ManualScreen(ttk.Frame):
     """Lazy, searchable, read-only extended help for the same 87 tooltip keys.
@@ -518,7 +614,10 @@ class ManualScreen(ttk.Frame):
                 self._gui_docs_view.pack(fill='both', expand=True)
 
     def _record(self, key):
-        return get_parameter_help(key, self.content_language)
+        record = get_parameter_help(key, self.content_language)
+        if self.content_language == 'pl' and key in POLISH_INDEX_TITLES:
+            return {**record, 'title': POLISH_INDEX_TITLES[key]}
+        return record
 
     def _search_changed(self, *_args):
         self._filter()
@@ -530,7 +629,7 @@ class ManualScreen(ttk.Frame):
         for key in self.keys:
             record = self._record(key)
             searchable = [str(record.get(field, '')) for field in ('title', 'short', 'long', 'group', 'key')]
-            if self.content_language == 'en':
+            if record.get('options'):
                 searchable.extend(choice['value']+' '+choice['description']
                                   for choice in record.get('options', []))
             if query and not any(query in value.casefold() for value in searchable):
@@ -581,8 +680,8 @@ class ManualScreen(ttk.Frame):
             self.details.insert('end', ('Opis rozszerzony' if self.content_language == 'pl'
                                         else 'Extended description') + '\n', 'head')
             self.details.insert('end', record['long'] + '\n\n', 'body')
-            if self.content_language == 'en' and record.get('options'):
-                self.details.insert('end', 'Available options\n', 'head')
+            if record.get('options'):
+                self.details.insert('end', ('Dostępne wartości\n' if self.content_language == 'pl' else 'Available options\n'), 'head')
                 for choice in record['options']:
                     self.details.insert('end', choice['value'] + '\n', 'option_value')
                     self.details.insert('end', choice['description'] + '\n\n', 'body')
@@ -596,11 +695,11 @@ class ManualScreen(ttk.Frame):
     def set_language(self, language, help_language=None):
         self.language = language
         self.content_language = help_language or language
-        self.title_label.configure(text='Manual')
-        self.tabs.tab(self.index_page, text='Index')
-        self.tabs.tab(self.documentation_page, text='Documentation')
-        self.tabs.tab(self.demo_documentation_page, text='Demo Project Documentation')
-        self.tabs.tab(self.gui_documentation_page, text='GUI Documentation')
+        self.title_label.configure(text='Podręcznik' if language == 'pl' else 'Manual')
+        self.tabs.tab(self.index_page, text='Indeks' if language == 'pl' else 'Index')
+        self.tabs.tab(self.documentation_page, text='Dokumentacja' if language == 'pl' else 'Documentation')
+        self.tabs.tab(self.demo_documentation_page, text='Dokumentacja projektów demonstracyjnych' if language == 'pl' else 'Demo Project Documentation')
+        self.tabs.tab(self.gui_documentation_page, text='Dokumentacja GUI' if language == 'pl' else 'GUI Documentation')
         if self._gui_docs_view is not None:
             self._gui_docs_view.set_language(language)
         if self._demo_view is not None:

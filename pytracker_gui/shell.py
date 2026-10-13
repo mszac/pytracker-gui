@@ -19,8 +19,8 @@ SCREEN_TITLES = {
     'experiment': 'Eksperyment',
     'logs': 'Logi',
     'statistics': 'Statystyki',
-    'manual': 'Manual',
-    'gui-settings': 'GUI Settings',
+    'manual': 'Podręcznik',
+    'gui-settings': 'Ustawienia GUI',
 }
 
 
@@ -174,7 +174,8 @@ class AppShell(ttk.Frame):
             elif screen_id == 'gui-settings':
                 self._screens[screen_id] = GuiSettingsScreen(
                     self.host, self._gui_settings_snapshot, self._save_gui_window_size,
-                    self.experiment.language_code, save_colors=self._save_gui_colors)
+                    self.experiment.language_code, save_colors=self._save_gui_colors,
+                    on_gui_manual=self.open_gui_settings_manual)
             else:
                 self._screens[screen_id] = PlaceholderScreen(
                     self.host, screen_id, self.experiment.language_code)
@@ -186,6 +187,15 @@ class AppShell(ttk.Frame):
         self.current_screen = screen_id
         self.screen_id.set(screen_id)
         self._update_nav_icons()
+
+    def open_gui_settings_manual(self, key):
+        """Open the installed GUI Settings guide in the current interface language."""
+        self.select_screen('manual')
+        manual = self._screens['manual']
+        manual.tabs.select(manual.gui_documentation_page)
+        manual._gui_docs_view.select_file('docs/GUI_SETTINGS_HELP_V032_' +
+                                          ('PL' if self.experiment.language_code == 'pl' else 'EN') + '.md')
+        manual._gui_docs_view.show_topic(key)
 
     def open_manual(self, key):
         """Navigate directly to extended parameter help without editing any fields."""

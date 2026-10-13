@@ -136,8 +136,8 @@ def apply_theme(root):
                     font=(family, 19, 'bold'))
     style.configure('Brand.TButton', background=c['window'], foreground=c['text'],
                     padding=(0, 0), borderwidth=0, relief='flat', font=(family, 17, 'bold'))
-    style.map('Brand.TButton', background=[('active', c['window']), ('pressed', c['window'])],
-              foreground=[('active', c['accent']), ('pressed', c['accent'])])
+    style.map('Brand.TButton', background=[('user1', c['hover']), ('active', c['window']), ('pressed', c['window'])],
+              foreground=[('user1', c['accent']), ('active', c['accent']), ('pressed', c['accent'])])
     style.configure('DashboardTitle.TLabel', background=c['surface'], foreground=c['text'],
                     font=(family, 17, 'bold'))
     style.configure('Dashboard.TButton', background=c['surface_alt'], foreground=c['text'],
@@ -158,14 +158,14 @@ def apply_theme(root):
     style.configure('TSeparator', background=c['border'])
     style.configure('TButton', background=c['surface_alt'], foreground=c['text'],
                     padding=(11, 7), borderwidth=1, bordercolor=c['border'],
-                    relief='flat', focusthickness=1, focuscolor=c['accent'])
-    style.map('TButton', background=[('disabled', c['surface']), ('pressed', c['hover']), ('active', c['hover'])],
+                    relief='flat', focusthickness=0)
+    style.map('TButton', background=[('disabled', c['surface']), ('user1', c['accent_hover']), ('pressed', c['hover']), ('active', c['hover'])],
               foreground=[('disabled', c['muted']), ('active', c['text'])],
-              bordercolor=[('focus', c['accent']), ('active', c['accent'])])
+              bordercolor=[('user1', c['accent']), ('active', c['accent'])])
     style.configure('Accent.TButton', background=c['accent'], foreground=c['accent_text'],
                     padding=(12, 8), borderwidth=1, bordercolor=c['accent'],
                     relief='flat', font=('TkDefaultFont', 10, 'bold'))
-    style.map('Accent.TButton', background=[('disabled', c['hover']), ('pressed', c['selection']), ('active', c['accent_hover'])],
+    style.map('Accent.TButton', background=[('disabled', c['hover']), ('user1', c['selection']), ('pressed', c['selection']), ('active', c['accent_hover'])],
               foreground=[('disabled', c['muted']), ('active', c['accent_text'])])
     style.configure('TEntry', fieldbackground=c['field'], foreground=c['text'],
                     insertcolor=c['text'], padding=(9, 7), borderwidth=1,
@@ -207,7 +207,74 @@ def apply_theme(root):
                     borderwidth=0, relief='flat', font=('TkDefaultFont', 10, 'bold'))
     style.map('Toolbutton', background=[('selected', c['surface_alt']), ('active', c['surface_alt'])],
               foreground=[('selected', c['accent']), ('active', c['text'])])
+    _install_transient_control_feedback(root)
     root._pytracker_dark_theme = True
+
+
+def _install_transient_control_feedback(root):
+    """Paint the cue on mouse press, before ttk invokes the command on release.
+
+    One idle redraw and one bounded timer per click; no action delay or polling.
+    Editable controls and persistent navigation state remain unchanged.
+    """
+    def clear_focus():
+        try:
+            grabbed = root.grab_current()
+            if grabbed is None or grabbed is root:
+                root.focus_set()
+        except tk.TclError:
+            pass
+
+    def press(event):
+        widget = event.widget
+        if widget.winfo_toplevel() is not root or widget.winfo_class() != 'TButton':
+            return
+        style_name = str(widget.cget('style'))
+        if style_name in ('DashboardImage.TButton', 'LogsAccent.TButton'):
+            return
+        if widget.instate(('disabled',)):
+            return
+        try:
+            widget.state(['user1'])
+            # Flush only pending idle drawing work. Do not process events or
+            # postpone the native ttk release/command handler.
+            widget.update_idletasks()
+        except tk.TclError:
+            return
+
+        def end_flash():
+            try:
+                if widget.winfo_exists():
+                    widget.state(['!user1'])
+            except tk.TclError:
+                pass
+
+        root.after(140, end_flash)
+
+    def release(event):
+        widget = event.widget
+        if widget.winfo_toplevel() != root or widget.winfo_class() != 'TButton':
+            return
+        root.after_idle(clear_focus)
+
+    def combo_selected(event):
+        widget = event.widget
+        if (widget.winfo_toplevel() is not root or widget.winfo_class() != 'TCombobox'
+                or not widget.instate(('readonly',))):
+            return
+
+        def unselect():
+            try:
+                if widget.winfo_exists():
+                    widget.selection_clear()
+                    clear_focus()
+            except tk.TclError:
+                pass
+        root.after_idle(unselect)
+
+    root.bind_all('<ButtonPress-1>', press, add='+')
+    root.bind_all('<ButtonRelease-1>', release, add='+')
+    root.bind_all('<<ComboboxSelected>>', combo_selected, add='+')
 
 
 def icon(root, name, active=False, *, color=None):

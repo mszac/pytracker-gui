@@ -13,16 +13,16 @@ class Field:
 
 DATASET_FIELDS = (
     Field('dataset.image.path', 'Katalog obrazów', 'path'),
-    Field('dataset.image.bbox_model', 'Model bbox', 'choice', ('grid','superpixel','saliency')),
+    Field('dataset.image.bbox_model', 'Model obszarów', 'choice', ('grid','superpixel','saliency')),
     Field('dataset.text.path', 'Plik danych CSV', 'path'),
     Field('dataset.text.label_column_name', 'Kolumna etykiet'),
     Field('dataset.text.text_column_name', 'Kolumna tekstu'),
-    Field('dataset.text.bbox_model', 'Model bbox', 'choice', ('word','line','sentence')),
-    Field('dataset.text.font_height', 'Wysokość fontu', 'int'),
+    Field('dataset.text.bbox_model', 'Model obszarów', 'choice', ('word','line','sentence')),
+    Field('dataset.text.font_height', 'Wysokość czcionki', 'int'),
     Field('dataset.text.wrap_fraction', 'Zawijanie tekstu (0–1)', 'float'),
     Field('dataset.time_series.path', 'Plik danych CSV', 'path'),
     Field('dataset.time_series.label_column_name', 'Kolumna klas'),
-    Field('dataset.time_series.bbox_model', 'Model bbox', 'choice', ('sample','window')),
+    Field('dataset.time_series.bbox_model', 'Model obszarów', 'choice', ('sample','window')),
     Field('output.folder', 'Katalog wyników', 'path'),
 )
 MONITOR_FIELDS = (
@@ -38,8 +38,8 @@ APPEARANCE_FIELDS = (
     Field('display.gui.button.color', 'Kolor przycisków'),
     Field('display.gui.button.text.color', 'Kolor tekstu przycisków'),
     Field('display.gui.button.text.size', 'Rozmiar tekstu', 'int'),
-    Field('display.gui.fixation_dot.size', 'Rozmiar fixation dot', 'int'),
-    Field('display.gui.fixation_dot.color', 'Kolor fixation dot'),
+    Field('display.gui.fixation_dot.size', 'Rozmiar punktu fiksacji', 'int'),
+    Field('display.gui.fixation_dot.color', 'Kolor punktu fiksacji'),
     Field('display.gui.aoe', 'Obszar AOE (X, Y)', 'pair_int'),
 )
 

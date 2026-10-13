@@ -22,6 +22,7 @@ _CURRENT = (
     ('Parameter manual', 'docs/PARAMETER_MANUAL_{lang}.md'),
 )
 _FEATURES = (
+    ('GUI Settings reference', 'docs/GUI_SETTINGS_HELP_V032_{lang}.md'),
     ('Manual: upstream .rst', 'docs/MANUAL_UPSTREAM_RST_V026_{lang}.md'),
     ('Manual: demo instructions', 'docs/MANUAL_DEMO_TREE_V0210_{lang}.md'),
     ('Exact run/session binding', 'docs/SESSION_MEASUREMENT_BINDING_V028_{lang}.md'),
@@ -149,6 +150,14 @@ class GuiDocumentationBrowser(ttk.Frame):
         if selected is None:
             return
         self.select_file(selected[0])
+
+    def show_topic(self, key):
+        """Locate a section by its literal GUI option key, without rescanning files."""
+        marker = ("Opcja: " if self.current_file and self.current_file.endswith("_PL.md")
+                  else "Option: ") + key
+        position = self.text.search(marker, "1.0", stopindex="end", nocase=False)
+        if position:
+            self.text.see(position)
 
     def select_file(self, relative_path):
         """Read exactly one indexed local Markdown file, with revalidation."""

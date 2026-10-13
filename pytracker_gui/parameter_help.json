@@ -37,7 +37,37 @@
       "long": "Lista zawiera Test Demo (EN), UX A/B Text (EN i PL), Time-Series Noise (Machine + PV), Text Search (EN i PL) oraz Image Semantic (EN). Wariant wybiera zestaw źródłowych konfiguracji do odczytu i statycznej kontroli. To nie jest kreator nowych badań ani przycisk wykonania eksperymentu.",
       "group": "Środowisko / GUI",
       "source": "https://github.com/mszac/tobii-pytracker-demo",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "test_en",
+          "description": "Test Demo [EN]: klasyfikacja obrazów w trzech próbach; standardowe uruchomienie upstream."
+        },
+        {
+          "value": "ux_en",
+          "description": "UX A/B Text [EN]: dwanaście angielskich zadań układu tekstu z dostarczonym adapterem."
+        },
+        {
+          "value": "ux_pl",
+          "description": "UX A/B Text [PL]: polski wariant z osobnym plikiem YAML."
+        },
+        {
+          "value": "ts_machine_pv",
+          "description": "Time-Series Noise [Machine → PV]: dwa kolejne bloki po dziewięć prób, z osobnymi plikami YAML i weryfikacją danych."
+        },
+        {
+          "value": "search_en",
+          "description": "Text Search [EN]: angielskie zadania wyszukiwania w tekście."
+        },
+        {
+          "value": "search_pl",
+          "description": "Text Search [PL]: polskie zadania wyszukiwania w tekście."
+        },
+        {
+          "value": "image_en",
+          "description": "Image Semantic [EN]: zadania analizy semantycznej obrazów z adapterem obrazów."
+        }
+      ]
     },
     {
       "key": "gui.block",
@@ -46,7 +76,21 @@
       "long": "Większość demonstracji posiada jeden blok i jeden natywny plik YAML. Time-Series Noise posiada dwa oddzielne bloki Machine Vibration i PV Power, z własnymi wartościami i limitami prób. Zmiana bloku nie przenosi wartości z jednego YAML do drugiego, a obecny GUI nie wykonuje obu bloków.",
       "group": "Środowisko / GUI",
       "source": "https://github.com/mszac/tobii-pytracker-demo",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "main",
+          "description": "Główny blok konfiguracji większości projektów startowych; edytowany i uruchamiany jako całość."
+        },
+        {
+          "value": "machine",
+          "description": "Pierwszy blok Time-Series Noise (Machine Vibration), z osobnym YAML; wykonywany przed PV."
+        },
+        {
+          "value": "pv",
+          "description": "Drugi blok Time-Series Noise (PV Power); wykonywany po pomyślnym zakończeniu Machine."
+        }
+      ]
     },
     {
       "key": "gui.gaze",
@@ -55,7 +99,21 @@
       "long": "NO_GAZE wyłącza rejestrowanie gaze, ale nie blokuje myszy do udzielania odpowiedzi. MOUSEGAZE uruchamia symulację ioHub za pomocą myszy, a TOBII wybiera konfigurację fizycznego urządzenia. W v0.1.5 wybór jest przekazywany do odrębnego procesu z oryginalnym runtime; poprawność działania urządzenia wymaga rzeczywistego testu.",
       "group": "Środowisko / GUI",
       "source": "https://github.com/sbobek/tobii-pytracker#usage",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "NO_GAZE",
+          "description": "Nie uruchamia pobierania danych wzrokowych; odpowiedzi z myszy w PsychoPy mogą nadal działać."
+        },
+        {
+          "value": "MOUSEGAZE",
+          "description": "Emulator śledzenia wzroku przez mysz w PsychoPy ioHub; konfiguracja musi być zgodna z projektem."
+        },
+        {
+          "value": "TOBII",
+          "description": "Fizyczny, obsługiwany tracker Tobii z odpowiednim plikiem ioHub; wymaga działającego urządzenia i sterownika."
+        }
+      ]
     },
     {
       "key": "gui.iohub_yaml",
@@ -109,7 +167,21 @@
       "long": "Wartość wybiera strategię obszarów wykorzystywanych do powiązania danych spojrzenia z fragmentami obrazu. `grid` tworzy siatkę, `superpixel` stosuje segmentację, a `saliency` korzysta z mapy istotności. Nie oznacza uruchomienia modelu analitycznego w GUI; dostępność zależy od instalacji i kodu runtime.",
       "group": "Dataset / output",
       "source": "https://github.com/sbobek/tobii-pytracker#configuration",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "grid",
+          "description": "Dzieli obraz na regularną siatkę prostokątnych obszarów."
+        },
+        {
+          "value": "superpixel",
+          "description": "Wyznacza regiony na podstawie lokalnie podobnych fragmentów obrazu (superpikseli)."
+        },
+        {
+          "value": "saliency",
+          "description": "Wybiera regiony na podstawie mapy istotności wizualnej; wynik zależy od zastosowanego modelu."
+        }
+      ]
     },
     {
       "key": "dataset.text.path",
@@ -145,7 +217,21 @@
       "long": "Parametr określa sposób wyznaczania obszarów zainteresowania w tekście. Tryb word dzieli tekst na słowa, line na wiersze, a sentence na zdania. Zmiana wpływa na granulację późniejszej analizy spojrzeń, nie na zawartość CSV.",
       "group": "Dataset / output",
       "source": "https://github.com/sbobek/tobii-pytracker#configuration",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "word",
+          "description": "Każde słowo jest osobnym obszarem analizy spojrzeń."
+        },
+        {
+          "value": "line",
+          "description": "Łączy tekst w regiony odpowiadające poszczególnym liniom widocznym na ekranie."
+        },
+        {
+          "value": "sentence",
+          "description": "Łączy tekst w regiony odpowiadające zdaniom, także gdy zdanie zajmuje kilka linii."
+        }
+      ]
     },
     {
       "key": "dataset.text.color",
@@ -208,7 +294,17 @@
       "long": "Tryb sample umożliwia związanie regionu z pojedynczą próbką szeregu. Tryb window agreguje sąsiednie punkty w okno. Wybór ma znaczenie dla interpretacji późniejszych obszarów gaze na wykresie.",
       "group": "Dataset / output",
       "source": "https://github.com/sbobek/tobii-pytracker#configuration",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "sample",
+          "description": "Poszczególne próbki wykresu są osobnymi obszarami analizy spojrzeń."
+        },
+        {
+          "value": "window",
+          "description": "Grupuje sąsiadujące próbki szeregu czasowego w większe okna analizy."
+        }
+      ]
     },
     {
       "key": "output.folder",
@@ -379,7 +475,17 @@
       "long": "Flaga `enable_eyetracker` ma wartość True dla MOUSEGAZE i TOBII oraz False dla NO_GAZE. Konkretny sterownik wybiera osobny plik YAML ioHub. Nawet przy NO_GAZE upstream wymaga istniejącej ścieżki do pliku konfiguracyjnego, a odpowiedzi myszą pozostają aktywne. Ta wersja przekazuje flagę do `main.main`, ale nie potwierdza sprzętowej gotowości urządzenia.",
       "group": "Parametry uruchomienia",
       "source": "https://github.com/sbobek/tobii-pytracker#usage",
-      "status": "reference"
+      "status": "reference",
+      "options": [
+        {
+          "value": "True",
+          "description": "Włącza ioHub i rejestrowanie zdarzeń wybranego trackera, zgodnie z konfiguracją YAML."
+        },
+        {
+          "value": "False",
+          "description": "Pomija inicjalizację trackera; odpowiedzi i inne włączone kanały mogą nadal działać."
+        }
+      ]
     },
     {
       "key": "runtime.enable_voice",
@@ -388,7 +494,17 @@
       "long": "Podczas uruchamiania GUI przekazuje `enable_voice` do `main.main`, również dla dem wykorzystujących adaptery. Tryb potrzebuje poprawnie skonfigurowanego mikrofonu i funkcjonującego toru audio w środowisku PsychoPy. Pomyślny start procesu nie stanowi dowodu, że nagranie dźwiękowe zostało utworzone; należy sprawdzić rezultat na docelowym Windows/Linux.",
       "group": "Parametry uruchomienia",
       "source": "https://github.com/sbobek/tobii-pytracker#usage",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "True",
+          "description": "Żąda nagrywania mikrofonem; wymaga urządzenia i działającej obsługi głosu."
+        },
+        {
+          "value": "False",
+          "description": "Nie uruchamia nagrywania mikrofonu dla sesji."
+        }
+      ]
     },
     {
       "key": "runtime.raw_data",
@@ -397,7 +513,17 @@
       "long": "Opcja `raw_data` jest przekazywana do oryginalnego silnika, także w demonstracjach z adapterami. Wymaga trybu gaze MOUSEGAZE albo TOBII; GUI blokuje połączenie Raw data z NO_GAZE. Format i kompletność surowych danych zależą od wersji ioHub i urządzenia i wymagają weryfikacji na fizycznym stanowisku.",
       "group": "Parametry uruchomienia",
       "source": "https://github.com/sbobek/tobii-pytracker#usage",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "True",
+          "description": "Żąda pełnych, surowych zdarzeń trackera zamiast zwykłych przetworzonych próbek spojrzeń."
+        },
+        {
+          "value": "False",
+          "description": "Wybiera standardową ścieżkę ekstrakcji próbek spojrzeń zamiast surowych zdarzeń."
+        }
+      ]
     },
     {
       "key": "runtime.disable_psychopy",
@@ -406,7 +532,17 @@
       "long": "Upstream udostępnia ten wariant do ciągłego zbierania gaze i voice aż do zatrzymania. Nie jest to zwykły tryb przeprowadzania obecnych siedmiu demonstracji. Dlatego GUI M1 nie oferuje jeszcze tego przełącznika.",
       "group": "Parametry uruchomienia",
       "source": "https://github.com/sbobek/tobii-pytracker#usage",
-      "status": "future"
+      "status": "future",
+      "options": [
+        {
+          "value": "True",
+          "description": "Żąda działania bez okien bodźców PsychoPy, jeśli obsługuje to uruchomiony tryb upstream."
+        },
+        {
+          "value": "False",
+          "description": "Uruchamia zwykłe, widoczne próby PsychoPy i ich elementy odpowiedzi."
+        }
+      ]
     },
     {
       "key": "runtime.loop_count",
@@ -424,7 +560,29 @@
       "long": "Podczas uruchamiania GUI konfiguruje `CustomLogger` w odrębnym procesie wybranym poziomem debug, info, warning, error albo critical. Standardowe wyjście i błędy są zbierane do trwałego `console.log` w prywatnym katalogu sesji. Wyższa szczegółowość może pomóc w diagnozie problemów, lecz nie zastępuje walidacji zebranych wyników.",
       "group": "Parametry uruchomienia",
       "source": "https://github.com/sbobek/tobii-pytracker#usage",
-      "status": "gui"
+      "status": "gui",
+      "options": [
+        {
+          "value": "debug",
+          "description": "Szczegółowe komunikaty diagnostyczne pomagające odtwarzać przebieg i błędy."
+        },
+        {
+          "value": "info",
+          "description": "Typowe komunikaty cyklu życia i istotnych zdarzeń; zalecany poziom."
+        },
+        {
+          "value": "warning",
+          "description": "Ostrzeżenia i błędy, bez zwykłych komunikatów informacyjnych."
+        },
+        {
+          "value": "error",
+          "description": "Tylko błędy i sytuacje krytyczne; bez ostrzeżeń."
+        },
+        {
+          "value": "critical",
+          "description": "Wyłącznie błędy najwyższej wagi; obsługiwane przez CLI upstream."
+        }
+      ]
     },
     {
       "key": "iohub.mouse.name",
@@ -442,7 +600,17 @@
       "long": "Gdy False, raportowanie wymaga jawnego włączenia przez odpowiednią metodę API. Domyślna konfiguracja upstream używa False. Zmiana wpływa na cykl rejestrowania i wymaga testu runtime.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Automatycznie wysyła zdarzenia po inicjalizacji urządzenia lub eksperymentu."
+        },
+        {
+          "value": "False",
+          "description": "Zdarzenia nie są zgłaszane, dopóki raportowanie nie zostanie jawnie włączone."
+        }
+      ]
     },
     {
       "key": "iohub.common.save_events",
@@ -451,7 +619,17 @@
       "long": "Przełącznik wpływa na zachowanie magazynu zdarzeń ioHub. Nie zastępuje opcji eksportu danych samego eksperymentu. Wyłączenie może uniemożliwić późniejszą analizę części rejestracji.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Zapisuje obsługiwane zdarzenia urządzenia w magazynie zdarzeń ioHub."
+        },
+        {
+          "value": "False",
+          "description": "Nie zapisuje zdarzeń w magazynie ioHub; nie jest to ustawienie zapisu wynikowego CSV eksperymentu."
+        }
+      ]
     },
     {
       "key": "iohub.common.stream_events",
@@ -460,7 +638,17 @@
       "long": "Wartość True pozwala aplikacji pobierać bieżące próbki. Przy False część obliczeń na żywo może nie otrzymywać danych. Ustawienie jest osobne od zapisywania zdarzeń.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Przesyła zdarzenia trackera do procesu eksperymentu podczas rejestracji."
+        },
+        {
+          "value": "False",
+          "description": "Wyłącza strumieniowanie na żywo; zadania zależne od spojrzeń mogą nie działać."
+        }
+      ]
     },
     {
       "key": "iohub.common.event_buffer_length",
@@ -487,7 +675,17 @@
       "long": "Występuje w konfiguracji MouseGaze jako ustawienie calibration.enable. Ustawienie kalibracji może mieć inne znaczenie w zależności od sterownika. Przed użyciem na sprzęcie sprawdź zachowanie ioHub.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Włącza kalibrację, jeśli jest obsługiwana przez wybrany sterownik."
+        },
+        {
+          "value": "False",
+          "description": "Pomija kalibrację, jeśli sterownik pozwala; dokładność może być niższa."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.type",
@@ -496,7 +694,21 @@
       "long": "Więcej punktów może ułatwić dopasowanie kalibracji na większym obszarze ekranu. Obsługiwane tryby zależą od implementacji sterownika. Oryginalne przykłady używają THREE_POINTS.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "THREE_POINTS",
+          "description": "Kalibracja w trzech punktach; najkrótszy dostępny wzór."
+        },
+        {
+          "value": "FIVE_POINTS",
+          "description": "Kalibracja w pięciu punktach, z większym pokryciem obszaru."
+        },
+        {
+          "value": "NINE_POINTS",
+          "description": "Kalibracja w dziewięciu punktach, gęstsza, ale dłuższa."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.randomize",
@@ -505,7 +717,17 @@
       "long": "Przy True kolejność wyświetlania punktów może się zmieniać. Przy False punkty mogą następować w ustalonym porządku. Wybierz ustawienie zgodne z protokołem badania.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Losuje kolejność odwiedzania punktów kalibracyjnych."
+        },
+        {
+          "value": "False",
+          "description": "Zachowuje kolejność punktów określoną w konfiguracji."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.auto_pace",
@@ -514,7 +736,17 @@
       "long": "Gdy True, przejście między punktami odbywa się w oparciu o czas. Przy False operator lub uczestnik może musieć potwierdzić dalszy krok. Zależy to od implementacji ioHub.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Automatycznie przechodzi do następnego punktu po czasie pacing_speed."
+        },
+        {
+          "value": "False",
+          "description": "Wymaga potwierdzenia przejścia; pacing_speed nie steruje wtedy tempem."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.pacing_speed",
@@ -541,7 +773,13 @@
       "long": "Oryginalny sterownik Tobii obsługuje CIRCLE_TARGET. Dostępność innych typów zależy od implementacji. Zmieniaj tylko po weryfikacji wsparcia urządzenia.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "CIRCLE_TARGET",
+          "description": "Rysuje udokumentowany cel kalibracyjny z dwoma okręgami, według zewnętrznej i wewnętrznej średnicy."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.color_type",
@@ -550,7 +788,13 @@
       "long": "W udostępnionym pliku ioHub używane jest rgb. Nie jest to parametr barwy samego tekstu ani przycisków eksperymentu. Wartości muszą być zgodne z wymaganiami PsychoPy.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "rgb",
+          "description": "Interpretuje kolory celu kalibracyjnego jako RGB; tryb pokazany w dostarczonym YAML."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.unit_type",
@@ -559,7 +803,13 @@
       "long": "Konfiguracja przykładowa używa pix. Zmiana jednostek wymaga konsekwentnego przeliczenia rozmiarów i ruchów celu. Nie należy jej wykonywać bez testu wyświetlania.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "pix",
+          "description": "Interpretuje geometrię celu w pikselach zgodnie z dostarczonym YAML."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.target_attributes.outer_diameter",
@@ -640,7 +890,17 @@
       "long": "Gdy False, cel może przechodzić skokowo między pozycjami. Gdy True, wykorzystywane są ustawienia prędkości i skalowania. Działanie jest zależne od implementacji ioHub.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Animuje przejścia i zmianę wielkości celu zgodnie z ustawieniami ruchu i rozszerzania."
+        },
+        {
+          "value": "False",
+          "description": "Wyłącza animację; cel może pojawić się od razu w kolejnym położeniu."
+        }
+      ]
     },
     {
       "key": "iohub.calibration.target_attributes.animate.movement_velocity",
@@ -676,7 +936,17 @@
       "long": "Gdy True, cel może przechodzić tylko od stanu powiększonego do normalnego. Przy False może najpierw rosnąć i następnie maleć. Działanie wymaga włączonej animacji.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Rozpoczyna od powiększonego celu i zmniejsza go do rozmiaru bazowego."
+        },
+        {
+          "value": "False",
+          "description": "Najpierw powiększa cel, a następnie ponownie go zmniejsza."
+        }
+      ]
     },
     {
       "key": "iohub.runtime_settings.sampling_rate",
@@ -685,7 +955,21 @@
       "long": "MouseGaze w konfiguracji upstream przewiduje 50 lub 100 Hz, natomiast przykładowy Tobii podaje 60 Hz. Wartość jest ustawieniem sterownika ioHub, a nie przełącznikiem częstotliwości monitora. Urządzenie fizyczne może nie obsługiwać danej częstotliwości; GUI jej nie negocjuje ani nie weryfikuje sprzętowo.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "MouseGaze: 50 Hz",
+          "description": "Emulator próbuje generować 50 próbek na sekundę; domyślna wartość MouseGaze."
+        },
+        {
+          "value": "MouseGaze: 100 Hz",
+          "description": "Druga dokumentowana częstotliwość MouseGaze; zwiększa liczbę zdarzeń."
+        },
+        {
+          "value": "Tobii: device-supported rate",
+          "description": "Dostępne częstotliwości zależą od modelu Tobii; przykładowa konfiguracja wskazuje 60 Hz."
+        }
+      ]
     },
     {
       "key": "iohub.runtime_settings.track_eyes",
@@ -694,7 +978,17 @@
       "long": "Oryginalny MouseGaze zgłasza próbki monokularne RIGHT_EYE. Sterownik Tobii w tym repozytorium opisuje tryb BINOCULAR. Nie należy zmieniać tych wartości na nieobsługiwane przez dany sterownik.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "RIGHT_EYE",
+          "description": "Zdarzenia tylko prawego oka w emulatorze MouseGaze."
+        },
+        {
+          "value": "BINOCULAR",
+          "description": "Zdarzenia obuoczne sterownika Tobii; nie jest to tryb emulatora MouseGaze."
+        }
+      ]
     },
     {
       "key": "iohub.controls.move",
@@ -703,7 +997,21 @@
       "long": "Źródłowy sterownik ioHub MouseGaze ma ustawienie `controls.move`, domyślnie `RIGHT_BUTTON`. Przycisk wykorzystywany do symulacji gaze należy odróżniać od lewego kliknięcia odpowiedzi. Ta dokumentacja opisuje upstream; niestandardowe adaptery mogą implementować inną politykę przycisku.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "LEFT_BUTTON",
+          "description": "Lewy przycisk myszy generuje aktualizacje pozycji spojrzenia; może kolidować z obsługą odpowiedzi."
+        },
+        {
+          "value": "MIDDLE_BUTTON",
+          "description": "Środkowy przycisk myszy generuje aktualizacje pozycji spojrzenia."
+        },
+        {
+          "value": "RIGHT_BUTTON",
+          "description": "Prawy przycisk myszy generuje aktualizacje spojrzenia; domyślnie w dostarczonym YAML MouseGaze."
+        }
+      ]
     },
     {
       "key": "iohub.controls.blink",
@@ -712,7 +1020,25 @@
       "long": "Źródłowy MouseGaze korzysta z kombinacji lewego i prawego przycisku do symulacji zdarzenia mrugnięcia. Przytrzymywanie przycisku gaze podczas klikania odpowiedzi może więc prowadzić do konfliktów gestów. Ustawienie dotyczy emulacji ioHub, nie wykrywania fizycznego mrugania przez Tobii.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "LEFT_BUTTON",
+          "description": "Lewy przycisk może symulować mrugnięcie, jeśli jest wymieniony w konfiguracji."
+        },
+        {
+          "value": "MIDDLE_BUTTON",
+          "description": "Środkowy przycisk może symulować mrugnięcie, jeśli jest wymieniony w konfiguracji."
+        },
+        {
+          "value": "RIGHT_BUTTON",
+          "description": "Prawy przycisk może symulować mrugnięcie, jeśli jest wymieniony w konfiguracji."
+        },
+        {
+          "value": "[LEFT_BUTTON, RIGHT_BUTTON]",
+          "description": "Oba wymienione przyciski mogą symulować mrugnięcia; tak skonfigurowano przykład."
+        }
+      ]
     },
     {
       "key": "iohub.controls.saccade_threshold",
@@ -730,7 +1056,17 @@
       "long": "W oryginalnym pliku ustawienie jest włączone. Oprogramowanie musi mieć dostęp do kompatybilnego urządzenia. Włączenie opcji nie zastępuje fizycznego podłączenia i sprawdzenia sterowników.",
       "group": "ioHub / eye-tracker (manual; nieedytowane obecnie)",
       "source": "https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/eyetracker_config.yaml",
-      "status": "iohub-only"
+      "status": "iohub-only",
+      "options": [
+        {
+          "value": "True",
+          "description": "Włącza sterownik Tobii w ioHub, gdy również konfiguracja główna zezwala na śledzenie wzroku."
+        },
+        {
+          "value": "False",
+          "description": "Wyłącza konfigurację urządzenia Tobii; fizyczny tracker nie będzie tu inicjalizowany."
+        }
+      ]
     },
     {
       "key": "iohub.tobii.model_name",

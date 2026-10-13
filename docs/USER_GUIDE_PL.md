@@ -119,3 +119,11 @@ Kontrola konfiguracji i testy kolekcji nie potwierdzają naukowej poprawności p
 **Korekta historyczna:** opis v0.1.4 mówił, że GUI **„nie uruchamia”** eksperymentów. To już nieaktualne: v0.2.17 uruchamia istniejące obsługiwane demonstracje.
 
 **v0.2.17:** Cztery przyciski Environment mają szerokość wyznaczaną przez Load repository; pozostałe elementy przycisków pozostają niezmienione. [Opis nowej zakładki](GUI_DOCUMENTATION_V0217_PL.md).
+
+## Ustawienia GUI i pomoc kontekstowa (v0.2.34)
+
+**GUI Settings** pokazuje rozmiar okna startowego, stały rozmiar kafelków Home, ścieżki aplikacji i repozytoriów, bieżące preferencje oraz edytor palety kolorów. Ścieżki i preferencje są na tej stronie **tylko do odczytu**; obsługiwane ścieżki zmieniaj w **Experiment → Environment**. Niebieskie ikony **i** wyświetlają krótkie opisy po polsku, a linki **man** prowadzą do właściwego wpisu w **Manual → GUI Documentation → Ustawienia GUI — opis opcji**. Nie otwierają ani nie modyfikują parametrów YAML eksperymentu.
+
+**Zapisz rozmiar** zapisuje wymiary na następne uruchomienie (mniejszy ekran może je ograniczyć). Cztery obrazy kafelków Home zachowują oryginalne rozmiary w pikselach. Kolory wpisuje się w formacie `#RRGGBB`; **Zapisz kolory** sprawdza i zapisuje kompletną paletę, która zostanie użyta po ponownym uruchomieniu GUI. **Przywróć domyślne wartości** zmienia jedynie wartości w edytorze, dopóki nie wybierzesz **Zapisz kolory**. Kolor ikon dotyczy tylko obsługiwanych ikon motywu — niekoniecznie ikon zaznaczonych sekcji i gotowych grafik kafelków.
+
+Dokumentacja parametrów eksperymentu w **Manual → Index** jest oddzielna od **GUI Documentation**. Pierwsza opisuje ustawienia badań, a druga zachowanie i lokalne ustawienia aplikacji. Język etykiet GUI, język podpowiedzi parametrów i język bodźców w projektach startowych to trzy niezależne pojęcia.

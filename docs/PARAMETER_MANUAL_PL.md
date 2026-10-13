@@ -14,7 +14,8 @@ osobny przycisk Uruchom demo.
 Parametry `yaml-only`, `iohub-only`, `reference` i `future`
 nie muszą mieć własnych edytorów lub pełnej obsługi wykonawczej.
 
-Nie ma jeszcze linku do pełnego manuala wewnątrz aplikacji.
+Link **man** w podpowiedzi otwiera odpowiedni wpis w karcie Manual → Index.
+Dostępne wartości są opisane dla parametrów, które udostępniają wybór opcji.
 Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Źródła:** [upstream](https://github.com/sbobek/tobii-pytracker), [demo repository](https://github.com/mszac/tobii-pytracker-demo), [MouseGaze YAML](https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml), [Tobii YAML](https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/eyetracker_config.yaml).
@@ -57,6 +58,16 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Lista zawiera Test Demo (EN), UX A/B Text (EN i PL), Time-Series Noise (Machine + PV), Text Search (EN i PL) oraz Image Semantic (EN). Wariant wybiera zestaw źródłowych konfiguracji do odczytu i statycznej kontroli. To nie jest kreator nowych badań ani przycisk wykonania eksperymentu.
 
+**Dostępne wartości:**
+
+- `test_en` — Test Demo [EN]: klasyfikacja obrazów w trzech próbach; standardowe uruchomienie upstream.
+- `ux_en` — UX A/B Text [EN]: dwanaście angielskich zadań układu tekstu z dostarczonym adapterem.
+- `ux_pl` — UX A/B Text [PL]: polski wariant z osobnym plikiem YAML.
+- `ts_machine_pv` — Time-Series Noise [Machine → PV]: dwa kolejne bloki po dziewięć prób, z osobnymi plikami YAML i weryfikacją danych.
+- `search_en` — Text Search [EN]: angielskie zadania wyszukiwania w tekście.
+- `search_pl` — Text Search [PL]: polskie zadania wyszukiwania w tekście.
+- `image_en` — Image Semantic [EN]: zadania analizy semantycznej obrazów z adapterem obrazów.
+
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
 **Źródło:** https://github.com/mszac/tobii-pytracker-demo
@@ -67,6 +78,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Większość demonstracji posiada jeden blok i jeden natywny plik YAML. Time-Series Noise posiada dwa oddzielne bloki Machine Vibration i PV Power, z własnymi wartościami i limitami prób. Zmiana bloku nie przenosi wartości z jednego YAML do drugiego, a obecny GUI nie wykonuje obu bloków.
 
+**Dostępne wartości:**
+
+- `main` — Główny blok konfiguracji większości projektów startowych; edytowany i uruchamiany jako całość.
+- `machine` — Pierwszy blok Time-Series Noise (Machine Vibration), z osobnym YAML; wykonywany przed PV.
+- `pv` — Drugi blok Time-Series Noise (PV Power); wykonywany po pomyślnym zakończeniu Machine.
+
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
 **Źródło:** https://github.com/mszac/tobii-pytracker-demo
@@ -76,6 +93,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Wybiera sposób rejestrowania spojrzeń podczas uruchamiania demonstracji z GUI.
 
 **Opis:** NO_GAZE wyłącza rejestrowanie gaze, ale nie blokuje myszy do udzielania odpowiedzi. MOUSEGAZE uruchamia symulację ioHub za pomocą myszy, a TOBII wybiera konfigurację fizycznego urządzenia. W v0.1.5 wybór jest przekazywany do odrębnego procesu z oryginalnym runtime; poprawność działania urządzenia wymaga rzeczywistego testu.
+
+**Dostępne wartości:**
+
+- `NO_GAZE` — Nie uruchamia pobierania danych wzrokowych; odpowiedzi z myszy w PsychoPy mogą nadal działać.
+- `MOUSEGAZE` — Emulator śledzenia wzroku przez mysz w PsychoPy ioHub; konfiguracja musi być zgodna z projektem.
+- `TOBII` — Fizyczny, obsługiwany tracker Tobii z odpowiednim plikiem ioHub; wymaga działającego urządzenia i sterownika.
 
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
@@ -139,6 +162,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Wartość wybiera strategię obszarów wykorzystywanych do powiązania danych spojrzenia z fragmentami obrazu. `grid` tworzy siatkę, `superpixel` stosuje segmentację, a `saliency` korzysta z mapy istotności. Nie oznacza uruchomienia modelu analitycznego w GUI; dostępność zależy od instalacji i kodu runtime.
 
+**Dostępne wartości:**
+
+- `grid` — Dzieli obraz na regularną siatkę prostokątnych obszarów.
+- `superpixel` — Wyznacza regiony na podstawie lokalnie podobnych fragmentów obrazu (superpikseli).
+- `saliency` — Wybiera regiony na podstawie mapy istotności wizualnej; wynik zależy od zastosowanego modelu.
+
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
 **Źródło:** https://github.com/sbobek/tobii-pytracker#configuration
@@ -178,6 +207,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Ustala poziom regionów tekstowych: word, line lub sentence.
 
 **Opis:** Parametr określa sposób wyznaczania obszarów zainteresowania w tekście. Tryb word dzieli tekst na słowa, line na wiersze, a sentence na zdania. Zmiana wpływa na granulację późniejszej analizy spojrzeń, nie na zawartość CSV.
+
+**Dostępne wartości:**
+
+- `word` — Każde słowo jest osobnym obszarem analizy spojrzeń.
+- `line` — Łączy tekst w regiony odpowiadające poszczególnym liniom widocznym na ekranie.
+- `sentence` — Łączy tekst w regiony odpowiadające zdaniom, także gdy zdanie zajmuje kilka linii.
 
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
@@ -248,6 +283,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Wybiera granice regionów szeregu: sample albo window.
 
 **Opis:** Tryb sample umożliwia związanie regionu z pojedynczą próbką szeregu. Tryb window agreguje sąsiednie punkty w okno. Wybór ma znaczenie dla interpretacji późniejszych obszarów gaze na wykresie.
+
+**Dostępne wartości:**
+
+- `sample` — Poszczególne próbki wykresu są osobnymi obszarami analizy spojrzeń.
+- `window` — Grupuje sąsiadujące próbki szeregu czasowego w większe okna analizy.
 
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
@@ -475,6 +515,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Flaga `enable_eyetracker` ma wartość True dla MOUSEGAZE i TOBII oraz False dla NO_GAZE. Konkretny sterownik wybiera osobny plik YAML ioHub. Nawet przy NO_GAZE upstream wymaga istniejącej ścieżki do pliku konfiguracyjnego, a odpowiedzi myszą pozostają aktywne. Ta wersja przekazuje flagę do `main.main`, ale nie potwierdza sprzętowej gotowości urządzenia.
 
+**Dostępne wartości:**
+
+- `True` — Włącza ioHub i rejestrowanie zdarzeń wybranego trackera, zgodnie z konfiguracją YAML.
+- `False` — Pomija inicjalizację trackera; odpowiedzi i inne włączone kanały mogą nadal działać.
+
 **Dostępność:** `reference` — Referencyjna opcja upstream/CLI; nie zawsze ma oddzielne pole edycji
 
 **Źródło:** https://github.com/sbobek/tobii-pytracker#usage
@@ -484,6 +529,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Wybiera nagrywanie głosu i przekazuje opcję do oryginalnego procesu eksperymentu.
 
 **Opis:** Podczas uruchamiania GUI przekazuje `enable_voice` do `main.main`, również dla dem wykorzystujących adaptery. Tryb potrzebuje poprawnie skonfigurowanego mikrofonu i funkcjonującego toru audio w środowisku PsychoPy. Pomyślny start procesu nie stanowi dowodu, że nagranie dźwiękowe zostało utworzone; należy sprawdzić rezultat na docelowym Windows/Linux.
+
+**Dostępne wartości:**
+
+- `True` — Żąda nagrywania mikrofonem; wymaga urządzenia i działającej obsługi głosu.
+- `False` — Nie uruchamia nagrywania mikrofonu dla sesji.
 
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
@@ -495,6 +545,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Opcja `raw_data` jest przekazywana do oryginalnego silnika, także w demonstracjach z adapterami. Wymaga trybu gaze MOUSEGAZE albo TOBII; GUI blokuje połączenie Raw data z NO_GAZE. Format i kompletność surowych danych zależą od wersji ioHub i urządzenia i wymagają weryfikacji na fizycznym stanowisku.
 
+**Dostępne wartości:**
+
+- `True` — Żąda pełnych, surowych zdarzeń trackera zamiast zwykłych przetworzonych próbek spojrzeń.
+- `False` — Wybiera standardową ścieżkę ekstrakcji próbek spojrzeń zamiast surowych zdarzeń.
+
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
 **Źródło:** https://github.com/sbobek/tobii-pytracker#usage
@@ -504,6 +559,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Uruchamia tryb headless bez okna PsychoPy.
 
 **Opis:** Upstream udostępnia ten wariant do ciągłego zbierania gaze i voice aż do zatrzymania. Nie jest to zwykły tryb przeprowadzania obecnych siedmiu demonstracji. Dlatego GUI M1 nie oferuje jeszcze tego przełącznika.
+
+**Dostępne wartości:**
+
+- `True` — Żąda działania bez okien bodźców PsychoPy, jeśli obsługuje to uruchomiony tryb upstream.
+- `False` — Uruchamia zwykłe, widoczne próby PsychoPy i ich elementy odpowiedzi.
 
 **Dostępność:** `future` — Funkcja oryginalnego silnika, odroczona w GUI
 
@@ -524,6 +584,14 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Ustawia poziom szczegółowości logów procesu eksperymentu.
 
 **Opis:** Podczas uruchamiania GUI konfiguruje `CustomLogger` w odrębnym procesie wybranym poziomem debug, info, warning, error albo critical. Standardowe wyjście i błędy są zbierane do trwałego `console.log` w prywatnym katalogu sesji. Wyższa szczegółowość może pomóc w diagnozie problemów, lecz nie zastępuje walidacji zebranych wyników.
+
+**Dostępne wartości:**
+
+- `debug` — Szczegółowe komunikaty diagnostyczne pomagające odtwarzać przebieg i błędy.
+- `info` — Typowe komunikaty cyklu życia i istotnych zdarzeń; zalecany poziom.
+- `warning` — Ostrzeżenia i błędy, bez zwykłych komunikatów informacyjnych.
+- `error` — Tylko błędy i sytuacje krytyczne; bez ostrzeżeń.
+- `critical` — Wyłącznie błędy najwyższej wagi; obsługiwane przez CLI upstream.
 
 **Dostępność:** `gui` — Pole lub preferencja GUI; przy uruchomieniu stosowana zgodnie z obsługą danej funkcji
 
@@ -547,6 +615,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Gdy False, raportowanie wymaga jawnego włączenia przez odpowiednią metodę API. Domyślna konfiguracja upstream używa False. Zmiana wpływa na cykl rejestrowania i wymaga testu runtime.
 
+**Dostępne wartości:**
+
+- `True` — Automatycznie wysyła zdarzenia po inicjalizacji urządzenia lub eksperymentu.
+- `False` — Zdarzenia nie są zgłaszane, dopóki raportowanie nie zostanie jawnie włączone.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -557,6 +630,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Przełącznik wpływa na zachowanie magazynu zdarzeń ioHub. Nie zastępuje opcji eksportu danych samego eksperymentu. Wyłączenie może uniemożliwić późniejszą analizę części rejestracji.
 
+**Dostępne wartości:**
+
+- `True` — Zapisuje obsługiwane zdarzenia urządzenia w magazynie zdarzeń ioHub.
+- `False` — Nie zapisuje zdarzeń w magazynie ioHub; nie jest to ustawienie zapisu wynikowego CSV eksperymentu.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -566,6 +644,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Określa, czy ioHub przesyła zdarzenia do procesu eksperymentu.
 
 **Opis:** Wartość True pozwala aplikacji pobierać bieżące próbki. Przy False część obliczeń na żywo może nie otrzymywać danych. Ustawienie jest osobne od zapisywania zdarzeń.
+
+**Dostępne wartości:**
+
+- `True` — Przesyła zdarzenia trackera do procesu eksperymentu podczas rejestracji.
+- `False` — Wyłącza strumieniowanie na żywo; zadania zależne od spojrzeń mogą nie działać.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
@@ -597,6 +680,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Występuje w konfiguracji MouseGaze jako ustawienie calibration.enable. Ustawienie kalibracji może mieć inne znaczenie w zależności od sterownika. Przed użyciem na sprzęcie sprawdź zachowanie ioHub.
 
+**Dostępne wartości:**
+
+- `True` — Włącza kalibrację, jeśli jest obsługiwana przez wybrany sterownik.
+- `False` — Pomija kalibrację, jeśli sterownik pozwala; dokładność może być niższa.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -606,6 +694,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Wybiera liczbę punktów kalibracji: THREE, FIVE albo NINE.
 
 **Opis:** Więcej punktów może ułatwić dopasowanie kalibracji na większym obszarze ekranu. Obsługiwane tryby zależą od implementacji sterownika. Oryginalne przykłady używają THREE_POINTS.
+
+**Dostępne wartości:**
+
+- `THREE_POINTS` — Kalibracja w trzech punktach; najkrótszy dostępny wzór.
+- `FIVE_POINTS` — Kalibracja w pięciu punktach, z większym pokryciem obszaru.
+- `NINE_POINTS` — Kalibracja w dziewięciu punktach, gęstsza, ale dłuższa.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
@@ -617,6 +711,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Przy True kolejność wyświetlania punktów może się zmieniać. Przy False punkty mogą następować w ustalonym porządku. Wybierz ustawienie zgodne z protokołem badania.
 
+**Dostępne wartości:**
+
+- `True` — Losuje kolejność odwiedzania punktów kalibracyjnych.
+- `False` — Zachowuje kolejność punktów określoną w konfiguracji.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -626,6 +725,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Automatycznie przełącza punkty kalibracji bez dodatkowego klikania.
 
 **Opis:** Gdy True, przejście między punktami odbywa się w oparciu o czas. Przy False operator lub uczestnik może musieć potwierdzić dalszy krok. Zależy to od implementacji ioHub.
+
+**Dostępne wartości:**
+
+- `True` — Automatycznie przechodzi do następnego punktu po czasie pacing_speed.
+- `False` — Wymaga potwierdzenia przejścia; pacing_speed nie steruje wtedy tempem.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
@@ -657,6 +761,10 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Oryginalny sterownik Tobii obsługuje CIRCLE_TARGET. Dostępność innych typów zależy od implementacji. Zmieniaj tylko po weryfikacji wsparcia urządzenia.
 
+**Dostępne wartości:**
+
+- `CIRCLE_TARGET` — Rysuje udokumentowany cel kalibracyjny z dwoma okręgami, według zewnętrznej i wewnętrznej średnicy.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -667,6 +775,10 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** W udostępnionym pliku ioHub używane jest rgb. Nie jest to parametr barwy samego tekstu ani przycisków eksperymentu. Wartości muszą być zgodne z wymaganiami PsychoPy.
 
+**Dostępne wartości:**
+
+- `rgb` — Interpretuje kolory celu kalibracyjnego jako RGB; tryb pokazany w dostarczonym YAML.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -676,6 +788,10 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Jednostka współrzędnych i rozmiarów elementów kalibracji.
 
 **Opis:** Konfiguracja przykładowa używa pix. Zmiana jednostek wymaga konsekwentnego przeliczenia rozmiarów i ruchów celu. Nie należy jej wykonywać bez testu wyświetlania.
+
+**Dostępne wartości:**
+
+- `pix` — Interpretuje geometrię celu w pikselach zgodnie z dostarczonym YAML.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
@@ -767,6 +883,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Gdy False, cel może przechodzić skokowo między pozycjami. Gdy True, wykorzystywane są ustawienia prędkości i skalowania. Działanie jest zależne od implementacji ioHub.
 
+**Dostępne wartości:**
+
+- `True` — Animuje przejścia i zmianę wielkości celu zgodnie z ustawieniami ruchu i rozszerzania.
+- `False` — Wyłącza animację; cel może pojawić się od razu w kolejnym położeniu.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -807,6 +928,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Gdy True, cel może przechodzić tylko od stanu powiększonego do normalnego. Przy False może najpierw rosnąć i następnie maleć. Działanie wymaga włączonej animacji.
 
+**Dostępne wartości:**
+
+- `True` — Rozpoczyna od powiększonego celu i zmniejsza go do rozmiaru bazowego.
+- `False` — Najpierw powiększa cel, a następnie ponownie go zmniejsza.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -816,6 +942,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Żądana częstotliwość próbkowania eye-trackera w Hz, zależna od sterownika.
 
 **Opis:** MouseGaze w konfiguracji upstream przewiduje 50 lub 100 Hz, natomiast przykładowy Tobii podaje 60 Hz. Wartość jest ustawieniem sterownika ioHub, a nie przełącznikiem częstotliwości monitora. Urządzenie fizyczne może nie obsługiwać danej częstotliwości; GUI jej nie negocjuje ani nie weryfikuje sprzętowo.
+
+**Dostępne wartości:**
+
+- `MouseGaze: 50 Hz` — Emulator próbuje generować 50 próbek na sekundę; domyślna wartość MouseGaze.
+- `MouseGaze: 100 Hz` — Druga dokumentowana częstotliwość MouseGaze; zwiększa liczbę zdarzeń.
+- `Tobii: device-supported rate` — Dostępne częstotliwości zależą od modelu Tobii; przykładowa konfiguracja wskazuje 60 Hz.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
@@ -827,6 +959,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Oryginalny MouseGaze zgłasza próbki monokularne RIGHT_EYE. Sterownik Tobii w tym repozytorium opisuje tryb BINOCULAR. Nie należy zmieniać tych wartości na nieobsługiwane przez dany sterownik.
 
+**Dostępne wartości:**
+
+- `RIGHT_EYE` — Zdarzenia tylko prawego oka w emulatorze MouseGaze.
+- `BINOCULAR` — Zdarzenia obuoczne sterownika Tobii; nie jest to tryb emulatora MouseGaze.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -837,6 +974,12 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 
 **Opis:** Źródłowy sterownik ioHub MouseGaze ma ustawienie `controls.move`, domyślnie `RIGHT_BUTTON`. Przycisk wykorzystywany do symulacji gaze należy odróżniać od lewego kliknięcia odpowiedzi. Ta dokumentacja opisuje upstream; niestandardowe adaptery mogą implementować inną politykę przycisku.
 
+**Dostępne wartości:**
+
+- `LEFT_BUTTON` — Lewy przycisk myszy generuje aktualizacje pozycji spojrzenia; może kolidować z obsługą odpowiedzi.
+- `MIDDLE_BUTTON` — Środkowy przycisk myszy generuje aktualizacje pozycji spojrzenia.
+- `RIGHT_BUTTON` — Prawy przycisk myszy generuje aktualizacje spojrzenia; domyślnie w dostarczonym YAML MouseGaze.
+
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
 **Źródło:** https://raw.githubusercontent.com/sbobek/tobii-pytracker/main/configs/mouse_eyetracker_config.yaml
@@ -846,6 +989,13 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Kombinacja przycisków emulująca mrugnięcie w MouseGaze.
 
 **Opis:** Źródłowy MouseGaze korzysta z kombinacji lewego i prawego przycisku do symulacji zdarzenia mrugnięcia. Przytrzymywanie przycisku gaze podczas klikania odpowiedzi może więc prowadzić do konfliktów gestów. Ustawienie dotyczy emulacji ioHub, nie wykrywania fizycznego mrugania przez Tobii.
+
+**Dostępne wartości:**
+
+- `LEFT_BUTTON` — Lewy przycisk może symulować mrugnięcie, jeśli jest wymieniony w konfiguracji.
+- `MIDDLE_BUTTON` — Środkowy przycisk może symulować mrugnięcie, jeśli jest wymieniony w konfiguracji.
+- `RIGHT_BUTTON` — Prawy przycisk może symulować mrugnięcie, jeśli jest wymieniony w konfiguracji.
+- `[LEFT_BUTTON, RIGHT_BUTTON]` — Oba wymienione przyciski mogą symulować mrugnięcia; tak skonfigurowano przykład.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
@@ -866,6 +1016,11 @@ Angielska wersja: [`PARAMETER_MANUAL_EN.md`](PARAMETER_MANUAL_EN.md).
 **Krótko:** Decyduje, czy ioHub ładuje fizyczny sterownik Tobii.
 
 **Opis:** W oryginalnym pliku ustawienie jest włączone. Oprogramowanie musi mieć dostęp do kompatybilnego urządzenia. Włączenie opcji nie zastępuje fizycznego podłączenia i sprawdzenia sterowników.
+
+**Dostępne wartości:**
+
+- `True` — Włącza sterownik Tobii w ioHub, gdy również konfiguracja główna zezwala na śledzenie wzroku.
+- `False` — Wyłącza konfigurację urządzenia Tobii; fizyczny tracker nie będzie tu inicjalizowany.
 
 **Dostępność:** `iohub-only` — Konfiguracja ioHub; GUI wybiera wyłącznie ścieżkę do pliku
 
